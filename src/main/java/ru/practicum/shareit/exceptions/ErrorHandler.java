@@ -16,22 +16,22 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleObjectNotFoundException(final ObjectNotFoundException e){
-        log.error(HttpStatus.NOT_FOUND.toString(),e);
+    public ErrorResponse handleObjectNotFoundException(final ObjectNotFoundException e) {
+        log.error(HttpStatus.NOT_FOUND.toString(), e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleObjectAlreadyExistsException(final ObjectAlreadyExists e){
-        log.error(HttpStatus.NOT_FOUND.toString(),e);
+    public ErrorResponse handleObjectAlreadyExistsException(final ObjectAlreadyExists e) {
+        log.error(HttpStatus.NOT_FOUND.toString(), e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(final ValidationException e){
-        log.error(HttpStatus.BAD_REQUEST.toString(),e);
+    public ErrorResponse handleValidationException(final ValidationException e) {
+        log.error(HttpStatus.BAD_REQUEST.toString(), e);
         return new ErrorResponse(e.getMessage());
     }
 
