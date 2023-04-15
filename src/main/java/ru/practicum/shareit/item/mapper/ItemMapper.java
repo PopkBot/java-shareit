@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.mapper;
+package ru.practicum.shareit.item.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -7,16 +7,16 @@ import org.modelmapper.convention.NameTokenizers;
 import org.modelmapper.convention.NamingConventions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
 
 @Component
-public class UserMapper {
+public class ItemMapper {
 
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserMapper() {
+    public ItemMapper() {
         this.modelMapper = new ModelMapper();
         Configuration configuration = modelMapper.getConfiguration();
         configuration.setFieldAccessLevel(Configuration.AccessLevel.PUBLIC);
@@ -27,12 +27,12 @@ public class UserMapper {
         configuration.setMatchingStrategy(MatchingStrategies.STANDARD);
     }
 
-    public UserDto convertToUserDto(User user) {
-        return modelMapper.map(user, UserDto.class);
+    public ItemDto convertToUserDto(Item item) {
+        return modelMapper.map(item, ItemDto.class);
     }
 
-    public User convertToUser(UserDto userDto) {
-        return modelMapper.map(userDto, User.class);
+    public Item convertToUser(ItemDto itemDto) {
+        return modelMapper.map(itemDto, Item.class);
     }
 
 }

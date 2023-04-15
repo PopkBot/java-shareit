@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user.controller;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -20,31 +19,31 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/users/{userId}")
-    public UserDto getUserById(@PathVariable Long userId){
-        log.info("user {} is requested",userId);
+    public UserDto getUserById(@PathVariable Long userId) {
+        log.info("user {} is requested", userId);
         return userService.getUserById(userId);
     }
 
     @PostMapping("/users")
-    public UserDto createUser(@Valid @RequestBody User user){
-        log.info("adding new user requested");
+    public UserDto createUser(@Valid @RequestBody User user) {
+        log.info("adding new user {} requested", user);
         return userService.createUser(user);
     }
 
     @PatchMapping("/users/{userId}")
-    public UserDto updateUser(@Valid @RequestBody User user, @PathVariable Long userId){
-        log.info("updating of user {} requested",userId);
-        return userService.updateUser(user,userId);
+    public UserDto updateUser(@Valid @RequestBody User user, @PathVariable Long userId) {
+        log.info("updating of user {} requested", userId);
+        return userService.updateUser(user, userId);
     }
 
     @DeleteMapping("/users/{userId}")
-    public UserDto deleteUserByID(@PathVariable Long userId){
-        log.info("deleting of user {} requested",userId);
+    public UserDto deleteUserByID(@PathVariable Long userId) {
+        log.info("deleting of user {} requested", userId);
         return userService.deleteUser(userId);
     }
 
     @GetMapping("/users")
-    public List<UserDto> getAllUsers(){
+    public List<UserDto> getAllUsers() {
         log.info("all users are requested");
         return userService.getAllUsers();
     }

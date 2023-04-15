@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -27,33 +27,33 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserDto createUser(User user) {
         validateUserForCreation(user);
-        if(userRepository.isContainUser(user)){
+        if (userRepository.isContainUser(user)) {
             throw new ObjectAlreadyExists("unable to create user: user already exists");
         }
-        UserDto userDto = userMapper.convertToUserDto(userRepository.addUser(user));
-        log.info("user {} is added", userDto);
-        return userDto;
+        User createdUser = userRepository.addUser(user);
+        log.info("user {} is added", createdUser);
+        return userMapper.convertToUserDto(createdUser);
     }
 
     @Override
     public UserDto getUserById(Long userId) {
         UserDto userDto = userMapper.convertToUserDto(userRepository.getUserById(userId));
-        log.info("userDto {} is returned",userDto);
+        log.info("userDto {} is returned", userDto);
         return userDto;
     }
 
     @Override
     public UserDto updateUser(User user, Long userId) {
         validateUserForUpdate(user);
-        if(!userRepository.isContainUser(userId)){
+        if (!userRepository.isContainUser(userId)) {
             throw new ObjectNotFoundException("unable to update user: user not found");
         }
-        if(userRepository.isContainUser(user,userId)){
+        if (userRepository.isContainUser(user, userId)) {
             throw new ObjectAlreadyExists("unable to update user: same user already exists");
         }
-        UserDto userDto = userMapper.convertToUserDto(userRepository.updateUser(user,userId));
-        log.info("user {} is updated",userDto);
-        return userDto;
+        User updatedUser = userRepository.updateUser(user, userId);
+        log.info("user {} is updated", updatedUser);
+        return userMapper.convertToUserDto(updatedUser);
     }
 
     @Override

@@ -12,7 +12,7 @@ public interface UserRepository {
 
     User addUser(User user);
 
-    User updateUser(User user,Long userId);
+    User updateUser(User user, Long userId);
 
     User deleteUser(Long userId);
 
@@ -20,6 +20,6 @@ public interface UserRepository {
 
     boolean isContainUser(User user);
 
-    boolean isContainUser(User user,Long userId);
+    boolean isContainUser(User user, Long userId);
 
 }
