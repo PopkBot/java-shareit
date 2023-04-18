@@ -29,7 +29,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(final MethodArgumentNotValidException e){
+    public ErrorResponse handleValidationException(final MethodArgumentNotValidException e) {
         log.error(HttpStatus.NOT_FOUND.toString(), e);
         return new ErrorResponse(e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
     }
