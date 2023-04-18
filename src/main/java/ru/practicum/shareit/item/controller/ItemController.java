@@ -2,35 +2,39 @@ package ru.practicum.shareit.item.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.item.validation.ItemCreate;
+import ru.practicum.shareit.item.validation.ItemUpdate;
 
 import java.util.List;
 
 @Slf4j
 @RestController
+@Validated
 @RequiredArgsConstructor
 public class ItemController {
 
     private final ItemService itemService;
 
     @GetMapping("/items/{itemId}")
-    public ItemDto getItemById(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto getItemById(@PathVariable Long itemId) {
         log.info("item {} requested", itemId);
         return itemService.getItemById(itemId);
     }
 
     @PostMapping("/items")
-    public ItemDto addItem(@RequestBody Item item, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto addItem(@ItemCreate @RequestBody  Item item, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("adding new item {} requested", item);
         return itemService.addItem(item, userId);
     }
 
     @PatchMapping("/items/{itemId}")
     public ItemDto updateItem(@PathVariable Long itemId,
-                              @RequestBody Item item,
+                              @ItemUpdate @RequestBody Item item,
                               @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("updating item requested");
         item.setId(itemId);

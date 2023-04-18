@@ -27,6 +27,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getAllItemsOfUser(Long userId) {
+        if (!userRepository.isContainUser(userId)) {
+            throw new ObjectNotFoundException("user not found");
+        }
         List<ItemDto> itemDtos = itemRepository.getAllItemsOfUser(userId).stream()
                 .map(itemMapper::convertToUserDto).collect(Collectors.toList());
         log.info("list of user`s {} items is returned", userId);
@@ -46,7 +49,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto addItem(Item item, Long userId) {
-        validateItemForAdding(item);
         if (itemRepository.isContainItem(item.getId())) {
             throw new ObjectAlreadyExists("item already exists");
         }
@@ -70,7 +72,6 @@ public class ItemServiceImpl implements ItemService {
         if (!itemRepository.isPertainToUser(item.getId(), userId)) {
             throw new ObjectNotFoundException("user doesn`t pertain this item");
         }
-        validateForUpdating(item);
         Item updatedItem = itemRepository.updateItem(item, userId);
         log.info("item {} is updated", updatedItem);
         return itemMapper.convertToUserDto(updatedItem);
@@ -94,27 +95,5 @@ public class ItemServiceImpl implements ItemService {
         log.info("item {} is deleted", removedItem);
         return itemMapper.convertToUserDto(removedItem);
     }
-
-    private void validateItemForAdding(Item item) {
-        if (item.getName() == null || item.getName().isBlank()) {
-            throw new ValidationException("name cannot be blank");
-        }
-        if (item.getDescription() == null || item.getDescription().isBlank()) {
-            throw new ValidationException("description cannot be blank");
-        }
-        if (item.getAvailable() == null) {
-            throw new ValidationException("available cannot be null");
-        }
-    }
-
-    private void validateForUpdating(Item item) {
-        if (item.getName() != null && item.getName().isBlank()) {
-            throw new ValidationException("name cannot be blank");
-        }
-        if (item.getDescription() != null && item.getDescription().isBlank()) {
-            throw new ValidationException("description cannot be blank");
-        }
-    }
-
 
 }

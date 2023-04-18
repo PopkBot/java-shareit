@@ -37,6 +37,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(Long userId) {
+        if (!userRepository.isContainUser(userId)) {
+            throw new ObjectNotFoundException("unable to get user: user not exists");
+        }
         UserDto userDto = userMapper.convertToUserDto(userRepository.getUserById(userId));
         log.info("userDto {} is returned", userDto);
         return userDto;
@@ -75,7 +78,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void validateUserForCreation(User user) {
-        if (user.getName().isBlank()) {
+        if (user.getName() == null || user.getName().isBlank()) {
             throw new ValidationException("name cannot be blank");
         }
         if (user.getEmail() == null || user.getEmail().isBlank()) {
