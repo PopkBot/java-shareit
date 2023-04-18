@@ -1,6 +1,13 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
+import org.springframework.lang.Nullable;
+import ru.practicum.shareit.item.validation.ItemCreate;
+import ru.practicum.shareit.item.validation.ItemUpdate;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 @Getter
 @Setter
