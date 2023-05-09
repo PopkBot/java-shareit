@@ -12,7 +12,9 @@ import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -27,54 +29,72 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(User user) {
         validateUserForCreation(user);
-        if (userRepository.isContainUser(user)) {
+        if (userRepository.findByEmailIgnoreCase(user.getEmail())!=null) {
             throw new ObjectAlreadyExists("unable to create user: user already exists");
         }
-        User createdUser = userRepository.addUser(user);
+        User createdUser = userRepository.save(user);
         log.info("user {} is added", createdUser);
         return userMapper.convertToUserDto(createdUser);
     }
 
     @Override
     public UserDto getUserById(Long userId) {
-        if (!userRepository.isContainUser(userId)) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
             throw new ObjectNotFoundException("unable to get user: user not exists");
         }
-        UserDto userDto = userMapper.convertToUserDto(userRepository.getUserById(userId));
+        UserDto userDto = userMapper.convertToUserDto(user.get());
         log.info("userDto {} is returned", userDto);
         return userDto;
     }
 
     @Override
+    @Transactional
     public UserDto updateUser(User user, Long userId) {
         validateUserForUpdate(user);
-        if (!userRepository.isContainUser(userId)) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
             throw new ObjectNotFoundException("unable to update user: user not found");
         }
-        if (userRepository.isContainUser(user, userId)) {
+        if (userRepository.findByEmailIgnoreCaseAndIdNot(user.getEmail(), userId) != null) {
             throw new ObjectAlreadyExists("unable to update user: same user already exists");
         }
-        User updatedUser = userRepository.updateUser(user, userId);
-        log.info("user {} is updated", updatedUser);
-        return userMapper.convertToUserDto(updatedUser);
+        User userToUpdate = userOptional.get();
+        updateUserParams(userToUpdate,user);
+        userToUpdate = userRepository.save(userToUpdate);
+        log.info("user {} is updated", userToUpdate);
+        return userMapper.convertToUserDto(userToUpdate);
+
+    }
+
+    private void updateUserParams(User userTo, User userFrom){
+        if (userFrom.getEmail() != null) {
+            userTo.setEmail(userFrom.getEmail());
+        }
+        if (userFrom.getName() != null) {
+            userTo.setName(userFrom.getName());
+        }
     }
 
     @Override
     public UserDto deleteUser(Long userId) {
-        if (!userRepository.isContainUser(userId)) {
+        Optional<User> userToDelete = userRepository.findById(userId);
+        if (userToDelete.isEmpty()) {
             throw new ObjectNotFoundException("unable to delete user: user not exists");
         }
-        UserDto userDto = userMapper.convertToUserDto(userRepository.deleteUser(userId));
+        userRepository.deleteById(userId);
+        UserDto userDto = userMapper.convertToUserDto(userToDelete.get());
         log.info("user {} is deleted", userDto);
         return userDto;
     }
 
     @Override
     public List<UserDto> getAllUsers() {
-        List<UserDto> userDtos = userRepository.getAllUsers().stream()
+        List<UserDto> userDtos = userRepository.findAll().stream()
                 .map(userMapper::convertToUserDto).collect(Collectors.toList());
         log.info("all users are returned");
         return userDtos;
+
     }
 
     private void validateUserForCreation(User user) {

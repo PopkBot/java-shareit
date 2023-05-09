@@ -29,7 +29,7 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public Item addItem(Item item, Long userId) {
         item.setId(itemIdCount);
-        item.setUserId(userId);
+        //item.setUser(userId);
         items.put(itemIdCount, item);
         putIntoUserToItemMap(item);
         itemIdCount++;
@@ -70,7 +70,7 @@ public class InMemoryItemRepository implements ItemRepository {
     public Item deleteItem(Long itemId) {
         Item itemToRemove = getItemById(itemId);
         items.remove(itemId);
-        userToItem.get(itemToRemove.getUserId()).remove(itemToRemove);
+        //userToItem.get(itemToRemove.getUserId()).remove(itemToRemove);
         return itemToRemove;
     }
 
@@ -89,14 +89,14 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     private void putIntoUserToItemMap(Item item) {
-        Long userId = item.getUserId();
+        /*Long userId = item.getUserId();
         Long itemId = item.getId();
         if (!userToItem.containsKey(userId)) {
             userToItem.put(userId, new HashSet<>(List.of(itemId)) {
             });
             return;
         }
-        userToItem.get(userId).add(itemId);
+        userToItem.get(userId).add(itemId);*/
     }
 
 }

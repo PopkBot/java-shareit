@@ -9,22 +9,19 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class UserInMemoryRepository implements UserRepository {
+public class UserInMemoryRepository {
 
     private final HashMap<Long, User> users = new HashMap<>();
     private Long userIdCount = 1L;
 
-    @Override
     public List<User> getAllUsers() {
         return new ArrayList<>(users.values());
     }
 
-    @Override
     public User getUserById(Long userId) {
         return users.get(userId);
     }
 
-    @Override
     public User addUser(User user) {
         user.setId(userIdCount);
         users.put(userIdCount, user);
@@ -32,7 +29,6 @@ public class UserInMemoryRepository implements UserRepository {
         return user;
     }
 
-    @Override
     public User updateUser(User user, Long userId) {
         User userToUpdate = users.get(userId);
         if (user.getEmail() != null) {
@@ -45,19 +41,16 @@ public class UserInMemoryRepository implements UserRepository {
         return getUserById(userId);
     }
 
-    @Override
     public User deleteUser(Long userId) {
         User removedUser = getUserById(userId);
         users.remove(userId);
         return removedUser;
     }
 
-    @Override
     public boolean isContainUser(Long id) {
         return users.containsKey(id);
     }
 
-    @Override
     public boolean isContainUser(User user, Long userId) {
         for (Map.Entry<Long, User> entry : users.entrySet()) {
             if (entry.getValue().equals(user) && !entry.getKey().equals(userId)) {
@@ -67,7 +60,6 @@ public class UserInMemoryRepository implements UserRepository {
         return false;
     }
 
-    @Override
     public boolean isContainUser(User user) {
         return users.containsValue(user);
     }

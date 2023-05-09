@@ -26,9 +26,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getAllItemsOfUser(Long userId) {
-        if (!userRepository.isContainUser(userId)) {
+       /* if (!userRepository.isContainUser(userId)) {
             throw new ObjectNotFoundException("user not found");
-        }
+        }*/
         List<ItemDto> itemDtos = itemRepository.getAllItemsOfUser(userId).stream()
                 .map(itemMapper::convertToUserDto).collect(Collectors.toList());
         log.info("list of user`s {} items is returned", userId);
@@ -51,9 +51,9 @@ public class ItemServiceImpl implements ItemService {
         if (itemRepository.isContainItem(item.getId())) {
             throw new ObjectAlreadyExists("item already exists");
         }
-        if (!userRepository.isContainUser(userId)) {
+       /* if (!userRepository.isContainUser(userId)) {
             throw new ObjectNotFoundException("user not found");
-        }
+        }*/
         Item addedItem = itemRepository.addItem(item, userId);
         log.info("item {} is added", addedItem);
         return itemMapper.convertToUserDto(addedItem);
