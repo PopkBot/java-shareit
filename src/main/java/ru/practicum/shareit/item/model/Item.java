@@ -11,6 +11,8 @@ import javax.persistence.*;
 @EqualsAndHashCode
 @Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name =  "items")
 public class Item {
 
@@ -22,8 +24,9 @@ public class Item {
     @Column(name = "description", nullable = false)
     private String description;
     @Column(name = "available", nullable = false)
+    @EqualsAndHashCode.Exclude
     private Boolean available;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

@@ -1,28 +1,25 @@
 package ru.practicum.shareit.item.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.projection.ItemIdProjection;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface ItemRepository {
+public interface ItemRepository extends JpaRepository<Item,Long> {
 
-    Item getItemById(Long itemId);
+    List<Item> findAllByUserId(Long userId);
 
-    List<Item> getAllItemsOfUser(Long userId);
+    Optional<ItemIdProjection> findByIdAndUserId(Long itemId, Long userId);
 
-    Item addItem(Item item, Long userId);
+    @Query(value = "select * from items as it where it.available = true and "+
+                "(UPPER(it.description) like ?1 or UPPER(it.name) like ?1 )",nativeQuery = true)
+    List<Item> searchByQueryText( String queryText);
 
-    Item updateItem(Item item, Long userId);
 
-    boolean isContainItem(Long itemId);
-
-    boolean isPertainToUser(Long itemId, Long userId);
-
-    boolean isContainUser(Long userId);
-
-    Item deleteItem(Long itemId);
-
-    List<Item> searchItem(String text);
 
 
 }

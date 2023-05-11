@@ -29,21 +29,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(User user) {
         validateUserForCreation(user);
-        if (userRepository.findByEmailIgnoreCase(user.getEmail())!=null) {
+        User createdUser;
+        try {
+            createdUser = userRepository.save(user);
+        }catch (RuntimeException e){
             throw new ObjectAlreadyExists("unable to create user: user already exists");
         }
-        User createdUser = userRepository.save(user);
         log.info("user {} is added", createdUser);
         return userMapper.convertToUserDto(createdUser);
     }
 
     @Override
     public UserDto getUserById(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new ObjectNotFoundException("unable to get user: user not exists");
-        }
-        UserDto userDto = userMapper.convertToUserDto(user.get());
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ObjectNotFoundException("unable to get user: user not exists")
+        );
+        UserDto userDto = userMapper.convertToUserDto(user);
         log.info("userDto {} is returned", userDto);
         return userDto;
     }
@@ -52,14 +53,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto updateUser(User user, Long userId) {
         validateUserForUpdate(user);
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new ObjectNotFoundException("unable to update user: user not found");
-        }
+        User userToUpdate = userRepository.findById(userId).orElseThrow(
+                ()->new ObjectNotFoundException("unable to update user: user not found")
+        );
         if (userRepository.findByEmailIgnoreCaseAndIdNot(user.getEmail(), userId) != null) {
             throw new ObjectAlreadyExists("unable to update user: same user already exists");
         }
-        User userToUpdate = userOptional.get();
         updateUserParams(userToUpdate,user);
         userToUpdate = userRepository.save(userToUpdate);
         log.info("user {} is updated", userToUpdate);
@@ -78,12 +77,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto deleteUser(Long userId) {
-        Optional<User> userToDelete = userRepository.findById(userId);
-        if (userToDelete.isEmpty()) {
-            throw new ObjectNotFoundException("unable to delete user: user not exists");
-        }
+        User userToDelete = userRepository.findById(userId).orElseThrow(
+                () -> new ObjectNotFoundException("unable to delete user: user not exists")
+        );
         userRepository.deleteById(userId);
-        UserDto userDto = userMapper.convertToUserDto(userToDelete.get());
+        UserDto userDto = userMapper.convertToUserDto(userToDelete);
         log.info("user {} is deleted", userDto);
         return userDto;
     }

@@ -19,10 +19,8 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Exclude
     private Long id;
     @Column(name = "name",nullable = false)
-    @EqualsAndHashCode.Exclude
     private String name;
     @Column(name = "email",unique = true)
     private String email;

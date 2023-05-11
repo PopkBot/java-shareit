@@ -23,8 +23,4 @@ public class ItemCreateValidator implements ConstraintValidator<ItemCreate, Item
     }
 }
 
-/*
-Перенес валидацию Item из сервиса в аннотацию, допустимо ли отсюда выкидывать RunTimeException?
-Пробовал сгруппировать стандартные аннотации @Valid, но не нашел способ исполнить проверку "если поле null,
- то не проверять @NotBlank, есть какой-то способ через стандартные аннотации @Valid собрать подобное сложное условие?
- */
+

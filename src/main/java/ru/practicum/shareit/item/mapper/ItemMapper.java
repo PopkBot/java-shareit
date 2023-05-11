@@ -7,6 +7,9 @@ import org.modelmapper.convention.NameTokenizers;
 import org.modelmapper.convention.NamingConventions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.booking.dto.BookerDtoInItem;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingInputDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
@@ -27,11 +30,18 @@ public class ItemMapper {
         configuration.setMatchingStrategy(MatchingStrategies.STANDARD);
     }
 
-    public ItemDto convertToUserDto(Item item) {
+    public ItemDto convertToItemDto(Item item) {
         return modelMapper.map(item, ItemDto.class);
     }
 
-    public Item convertToUser(ItemDto itemDto) {
+    public ItemDto convertToItemDtoForOwner(Item item, BookerDtoInItem nextBooking, BookerDtoInItem lastBooking) {
+        ItemDto itemDto = modelMapper.map(item, ItemDto.class);
+        itemDto.setNextBooking(nextBooking);
+        itemDto.setLastBooking(lastBooking);
+        return itemDto;
+    }
+
+    public Item convertToItem(ItemDto itemDto) {
         return modelMapper.map(itemDto, Item.class);
     }
 
