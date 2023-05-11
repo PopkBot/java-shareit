@@ -4,15 +4,15 @@ import lombok.*;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
-@Builder
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name =  "items")
 public class Item {
 
@@ -29,5 +29,8 @@ public class Item {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+    @OneToMany
+    @JoinColumn(name = "item_id")
+    private Set<Comment> comments = new HashSet<>();
 
 }

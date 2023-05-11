@@ -9,7 +9,6 @@ import ru.practicum.shareit.booking.dto.BookingInputDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.exceptions.ObjectAlreadyExists;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.model.Item;
@@ -17,11 +16,10 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +47,7 @@ public class BookingServiceImp implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto addBooking(BookingInputDto bookingInputDto, Long bookerId) {
 
         User booker = userRepository.findById(bookerId).orElseThrow(
@@ -60,13 +59,15 @@ public class BookingServiceImp implements BookingService {
         if(item.getUser().getId().equals(bookerId)){
             throw new ObjectNotFoundException("Owner cannot book own item");
         }
+        /*
         Long overlaps = bookingRepository.countDateOverlaps(
                 Timestamp.from(bookingInputDto.getStart().toInstant()).toString()+"Z",
                 Timestamp.from(bookingInputDto.getEnd().toInstant()).toString()+"Z",
                 item.getUser().getId());
         if (overlaps > 0) {
-        //    throw new ValidationException("Booking dates overlap");
+            throw new ValidationException("Booking dates overlap");
         }
+         */
         if(!item.getAvailable()){
             throw new ValidationException("Item is not available");
         }
@@ -76,6 +77,7 @@ public class BookingServiceImp implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto setApprovedStatus(Long bookingId, Long ownerId, boolean isApproved) {
 
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(

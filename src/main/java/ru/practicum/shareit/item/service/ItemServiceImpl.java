@@ -3,14 +3,20 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookerDtoInItem;
-import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
+import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentInputDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -18,8 +24,9 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,19 +39,22 @@ public class ItemServiceImpl implements ItemService {
     private final ItemMapper itemMapper;
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
+    private final CommentMapper commentMapper;
+    private final CommentRepository commentRepository;
 
 
     @Override
     public List<ItemDto> getAllItemsOfUser(Long userId) {
-        String nowStr = Timestamp.from(Instant.now()).toString()+"Z";
+        String nowStr = Timestamp.from(Instant.now()).toString() + "Z";
         userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("user not found"));
         List<ItemDto> itemDtos = itemRepository.findAllByUserId(userId).stream()
                 .map(item -> {
-                    BookerDtoInItem bookingDtoNext = bookingMapper.convertToBookingDtoInItem(
-                            bookingRepository.getNextBooking(nowStr,item.getId()));
-                    BookerDtoInItem bookingDtoLast = bookingMapper.convertToBookingDtoInItem(
-                            bookingRepository.getLastBooking(nowStr,item.getId()));
-                    return itemMapper.convertToItemDtoForOwner(item,bookingDtoNext,bookingDtoLast);
+                            BookerDtoInItem bookingDtoNext = bookingMapper.convertToBookingDtoInItem(
+                                    bookingRepository.getNextBooking(nowStr, item.getId()));
+                            BookerDtoInItem bookingDtoLast = bookingMapper.convertToBookingDtoInItem(
+                                    bookingRepository.getLastBooking(nowStr, item.getId()));
+                            return itemMapper.convertToItemDtoForOwner(
+                                    item, bookingDtoNext, bookingDtoLast);
                         }
                 ).collect(Collectors.toList());
         log.info("list of user`s {} items is returned", userId);
@@ -73,9 +83,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto addItem(Item item, Long userId) {
 
-            //throw new ObjectAlreadyExists("item already exists");
         User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("user not found"));
         item.setUser(user);
         Item addedItem = itemRepository.save(item);
@@ -90,9 +100,6 @@ public class ItemServiceImpl implements ItemService {
         Item itemToUpdate = itemRepository.findById(item.getId()).orElseThrow(
                 ()->new ObjectNotFoundException("item not exists")
         );
-        /*if (!itemRepository.isContainUser(userId)) {
-            throw new ObjectNotFoundException("user hasn`t published any item");
-        }*/
         itemRepository.findByIdAndUserId(item.getId(),userId).orElseThrow(
                 ()->new ObjectNotFoundException("user doesn`t pertain this item")
         );
@@ -102,7 +109,7 @@ public class ItemServiceImpl implements ItemService {
         return itemMapper.convertToItemDto(itemToUpdate);
     }
 
-    public void updateItemParams(Item itemTo, Item itemFrom) {
+    private void updateItemParams(Item itemTo, Item itemFrom) {
         if (itemFrom.getName() != null) {
             itemTo.setName(itemFrom.getName());
         }
@@ -128,11 +135,45 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto deleteItem(Long itemId) {
         Item itemToRemove = itemRepository.findById(itemId).orElseThrow(
-                ()->new ObjectNotFoundException("item not exists")
+                () -> new ObjectNotFoundException("item not exists")
         );
         itemRepository.delete(itemToRemove);
         log.info("item {} is deleted", itemToRemove);
         return itemMapper.convertToItemDto(itemToRemove);
     }
+
+    @Override
+    @Transactional
+    public CommentDto addComment(CommentInputDto commentInputDto) {
+
+        User author = userRepository.findById(commentInputDto.getAuthorId()).orElseThrow(
+                () -> new ObjectNotFoundException("User not found")
+        );
+        Item item = itemRepository.findById(commentInputDto.getItemId()).orElseThrow(
+                () -> new ObjectNotFoundException("Item not found")
+        );
+        String nowStr = Timestamp.from(Instant.now()).toString() + "Z";
+        Long count = bookingRepository.countByBookerIdAndItemIdAndStatus(author.getId(),
+                commentInputDto.getItemId(), Status.APPROVED.toString(), nowStr);
+        if (count == 0) {
+            throw new ValidationException("User hasn`t booked this item");
+        }
+        if (item.getUser().getId().equals(author.getId())) {
+            throw new ValidationException("Owner cannot leave comments");
+        }
+        Comment comment = commentRepository.save(makeComment(commentInputDto, author));
+        item.getComments().add(comment);
+        log.info("Comment {} is added", comment);
+        return commentMapper.convertToCommentDto(comment);
+
+    }
+
+    private Comment makeComment(CommentInputDto commentInputDto, User author) {
+        Comment comment = commentMapper.convertToComment(commentInputDto);
+        comment.setAuthor(author);
+        comment.setCreated(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().getEpochSecond());
+        return comment;
+    }
+
 
 }

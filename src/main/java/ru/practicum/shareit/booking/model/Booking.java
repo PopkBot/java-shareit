@@ -10,7 +10,6 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.Date;
 
 @Getter
 @Setter

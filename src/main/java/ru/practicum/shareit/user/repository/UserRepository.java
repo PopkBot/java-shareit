@@ -7,7 +7,6 @@ import ru.practicum.shareit.user.model.User;
 
 public interface UserRepository extends JpaRepository<User,Long> {
 
-    UserIdProjection findByEmailIgnoreCase(String email);
 
     UserIdProjection findByEmailIgnoreCaseAndIdNot(String email, Long userId);
 

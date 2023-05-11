@@ -1,9 +1,9 @@
 package ru.practicum.shareit.item.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import ru.practicum.shareit.booking.dto.BookerDtoInItem;
-import ru.practicum.shareit.booking.dto.BookingDto;
+
+import java.util.List;
 
 @Data
 public class ItemDto {
@@ -13,4 +13,5 @@ public class ItemDto {
     private boolean available;
     private BookerDtoInItem nextBooking;
     private BookerDtoInItem lastBooking;
+    private List<CommentDto> comments;
 }

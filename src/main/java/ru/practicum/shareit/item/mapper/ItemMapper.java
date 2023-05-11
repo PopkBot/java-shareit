@@ -8,18 +8,22 @@ import org.modelmapper.convention.NamingConventions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.BookerDtoInItem;
-import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingInputDto;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ItemMapper {
 
     private final ModelMapper modelMapper;
+    private final CommentMapper commentMapper;
 
     @Autowired
-    public ItemMapper() {
+    public ItemMapper(CommentMapper commentMapper) {
+        this.commentMapper = commentMapper;
         this.modelMapper = new ModelMapper();
         Configuration configuration = modelMapper.getConfiguration();
         configuration.setFieldAccessLevel(Configuration.AccessLevel.PUBLIC);
@@ -27,17 +31,30 @@ public class ItemMapper {
         configuration.setDestinationNamingConvention(NamingConventions.JAVABEANS_MUTATOR);
         configuration.setSourceNameTokenizer(NameTokenizers.CAMEL_CASE);
         configuration.setDestinationNameTokenizer(NameTokenizers.CAMEL_CASE);
-        configuration.setMatchingStrategy(MatchingStrategies.STANDARD);
+        configuration.setMatchingStrategy(MatchingStrategies.STRICT);
     }
+
 
     public ItemDto convertToItemDto(Item item) {
-        return modelMapper.map(item, ItemDto.class);
+        ItemDto itemDto = modelMapper.map(item, ItemDto.class);
+        List<CommentDto> commentDtos = item.getComments()
+                .stream()
+                .map(commentMapper::convertToCommentDto)
+                .collect(Collectors.toList());
+        itemDto.setComments(commentDtos);
+        return itemDto;
     }
 
-    public ItemDto convertToItemDtoForOwner(Item item, BookerDtoInItem nextBooking, BookerDtoInItem lastBooking) {
+    public ItemDto convertToItemDtoForOwner(
+            Item item, BookerDtoInItem nextBooking, BookerDtoInItem lastBooking) {
         ItemDto itemDto = modelMapper.map(item, ItemDto.class);
         itemDto.setNextBooking(nextBooking);
         itemDto.setLastBooking(lastBooking);
+        List<CommentDto> commentDtos = item.getComments()
+                .stream()
+                .map(commentMapper::convertToCommentDto)
+                .collect(Collectors.toList());
+        itemDto.setComments(commentDtos);
         return itemDto;
     }
 

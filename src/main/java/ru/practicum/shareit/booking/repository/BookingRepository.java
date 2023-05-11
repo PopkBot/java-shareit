@@ -3,15 +3,16 @@ package ru.practicum.shareit.booking.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.practicum.shareit.booking.Status;
-import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+
+/*
+Как хранится время в SQL вызвало у меня небывалые недоумения, я читал, что временные типы данных SQL работают "странно".
+Большую часть времени работы над этим ТЗ ушла на борьбу с часовыми зонами, тем как SQL жонглировал часами то прибавляя,
+то вычитая их. Я буду очень благодарен, если вы оставите литературу или комментарий как обуздать этого временного буйвола.
+ */
+
 
 public interface BookingRepository extends JpaRepository<Booking,Long> {
 
@@ -47,8 +48,8 @@ public interface BookingRepository extends JpaRepository<Booking,Long> {
                                          @Param(value = "user_type") String userType);
 
     @Query(nativeQuery = true,
-            value = "select * from bookings where "+TYPE_CASE+" = :user_id "+
-            "and start_date > :date order by start_date desc")
+            value = "select * from bookings where " + TYPE_CASE + " = :user_id " +
+                    "and start_date > :date order by end_date desc")
     List<Booking> getFutureBookingsOfOwner(@Param(value = "user_id") Long userId,
                                            @Param(value = "date") String now,
                                            @Param(value = "user_type") String userType);
@@ -67,10 +68,19 @@ public interface BookingRepository extends JpaRepository<Booking,Long> {
                            @Param(value = "item_id") Long itemId);
 
     @Query(nativeQuery = true,
-            value = "select top 1 * from bookings where item_id = :item_id "+
-                    "and start_date <= :date and status = 'APPROVED' order by end_date")
+            value = "select top 1 * from bookings where item_id = :item_id " +
+                    "and start_date <= :date and status = 'APPROVED' order by end_date desc")
     Booking getLastBooking(@Param(value = "date") String now,
                            @Param(value = "item_id") Long itemId);
 
+
+    @Query(nativeQuery = true,
+            value = "select count(*) from bookings where booker_id = :booker_id " +
+                    "and item_id = :item_id and UPPER(status) = UPPER(:status) " +
+                    "and start_date < :date_string")
+    Long countByBookerIdAndItemIdAndStatus(@Param(value = "booker_id") Long bookerId,
+                                           @Param(value = "item_id") Long itemId,
+                                           @Param(value = "status") String status,
+                                           @Param(value = "date_string") String now);
 
 }
