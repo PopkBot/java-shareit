@@ -40,8 +40,9 @@ public class CommentMapper {
         commentDto.setCreated(LocalDateTime.ofInstant(Instant.ofEpochSecond(comment.getCreated()),
                 TimeZone.getDefault().toZoneId()));
         commentDto.setCreated(commentDto.getCreated().plusHours(
-                TimeUnit.SECONDS.toHours(ZonedDateTime.now().getOffset().getTotalSeconds() + 100))
+                TimeUnit.SECONDS.toHours(ZonedDateTime.now().getOffset().getTotalSeconds()))
         );
+        commentDto.setCreated(commentDto.getCreated().plusSeconds(100));
         return commentDto;
     }
 
