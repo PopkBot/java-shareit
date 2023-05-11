@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
         User createdUser;
         try {
             createdUser = userRepository.save(user);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             throw new ObjectAlreadyExists("unable to create user: user already exists");
         }
         log.info("user {} is added", createdUser);
@@ -54,19 +54,19 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(User user, Long userId) {
         validateUserForUpdate(user);
         User userToUpdate = userRepository.findById(userId).orElseThrow(
-                ()->new ObjectNotFoundException("unable to update user: user not found")
+                () -> new ObjectNotFoundException("unable to update user: user not found")
         );
         if (userRepository.findByEmailIgnoreCaseAndIdNot(user.getEmail(), userId) != null) {
             throw new ObjectAlreadyExists("unable to update user: same user already exists");
         }
-        updateUserParams(userToUpdate,user);
+        updateUserParams(userToUpdate, user);
         userToUpdate = userRepository.save(userToUpdate);
         log.info("user {} is updated", userToUpdate);
         return userMapper.convertToUserDto(userToUpdate);
 
     }
 
-    private void updateUserParams(User userTo, User userFrom){
+    private void updateUserParams(User userTo, User userFrom) {
         if (userFrom.getEmail() != null) {
             userTo.setEmail(userFrom.getEmail());
         }

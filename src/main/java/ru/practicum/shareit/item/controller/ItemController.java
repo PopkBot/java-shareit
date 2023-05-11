@@ -27,11 +27,11 @@ public class ItemController {
     public ItemDto getItemById(@PathVariable Long itemId,
                                @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("item {} requested", itemId);
-        return itemService.getItemById(itemId,userId);
+        return itemService.getItemById(itemId, userId);
     }
 
     @PostMapping("/items")
-    public ItemDto addItem(@ItemCreate @RequestBody  Item item, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto addItem(@ItemCreate @RequestBody Item item, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("adding new item {} requested", item);
         return itemService.addItem(item, userId);
     }

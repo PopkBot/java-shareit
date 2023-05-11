@@ -33,7 +33,7 @@ public class BookingMapper {
     }
 
     public BookingDto convertToBookingDto(Booking booking) {
-        if(booking==null){
+        if (booking == null) {
             return null;
         }
         BookingDto bookingDto = modelMapper.map(booking, BookingDto.class);
@@ -53,8 +53,8 @@ public class BookingMapper {
         return booking;
     }
 
-    public BookerDtoInItem convertToBookingDtoInItem(Booking booking){
-        if(booking==null){
+    public BookerDtoInItem convertToBookingDtoInItem(Booking booking) {
+        if (booking == null) {
             return null;
         }
         BookerDtoInItem bookerDtoInItem = modelMapper.map(booking, BookerDtoInItem.class);

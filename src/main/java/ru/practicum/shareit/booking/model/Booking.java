@@ -22,11 +22,11 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "start_date",nullable = false)
+    @Column(name = "start_date", nullable = false)
     private Instant start;
-    @Column(name = "end_date",nullable = false)
+    @Column(name = "end_date", nullable = false)
     private Instant end;
-    @Column(name = "status",nullable = false)
+    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
     @OneToOne
@@ -38,8 +38,6 @@ public class Booking {
     @OneToOne
     @JoinColumn(name = "item_id")
     private Item item;
-
-
 
 
 }

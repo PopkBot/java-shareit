@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 public @interface ItemUpdate {
     String message() default "{Item is invalid for update}";
 
-    Class<?>[] groups() default { };
+    Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default { };
+    Class<? extends Payload>[] payload() default {};
 }

@@ -45,7 +45,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getAllItemsOfUser(Long userId) {
-        String nowStr = Timestamp.from(Instant.now()).toString() + "Z";
+        String nowStr = Timestamp.from(Instant.now()) + "Z";
         userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("user not found"));
         List<ItemDto> itemDtos = itemRepository.findAllByUserId(userId).stream()
                 .map(item -> {
@@ -62,20 +62,20 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItemById(Long itemId,Long userId) {
+    public ItemDto getItemById(Long itemId, Long userId) {
 
         Item item = itemRepository.findById(itemId).orElseThrow(
-                ()->new ObjectNotFoundException("item not found")
+                () -> new ObjectNotFoundException("item not found")
         );
         ItemDto itemDto;
-        String nowStr = Timestamp.from(Instant.now()).toString()+"Z";
-        if(item.getUser().getId().equals(userId)){
+        String nowStr = Timestamp.from(Instant.now()) + "Z";
+        if (item.getUser().getId().equals(userId)) {
             BookerDtoInItem bookingDtoNext = bookingMapper.convertToBookingDtoInItem(
-                    bookingRepository.getNextBooking(nowStr,item.getId()));
+                    bookingRepository.getNextBooking(nowStr, item.getId()));
             BookerDtoInItem bookingDtoLast = bookingMapper.convertToBookingDtoInItem(
-                    bookingRepository.getLastBooking(nowStr,item.getId()));
-            itemDto = itemMapper.convertToItemDtoForOwner(item,bookingDtoNext,bookingDtoLast);
-        }else{
+                    bookingRepository.getLastBooking(nowStr, item.getId()));
+            itemDto = itemMapper.convertToItemDtoForOwner(item, bookingDtoNext, bookingDtoLast);
+        } else {
             itemDto = itemMapper.convertToItemDto(item);
         }
         log.info("item {} is returned", itemDto);
@@ -98,12 +98,12 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDto updateItem(Item item, Long userId) {
         Item itemToUpdate = itemRepository.findById(item.getId()).orElseThrow(
-                ()->new ObjectNotFoundException("item not exists")
+                () -> new ObjectNotFoundException("item not exists")
         );
-        itemRepository.findByIdAndUserId(item.getId(),userId).orElseThrow(
-                ()->new ObjectNotFoundException("user doesn`t pertain this item")
+        itemRepository.findByIdAndUserId(item.getId(), userId).orElseThrow(
+                () -> new ObjectNotFoundException("user doesn`t pertain this item")
         );
-        updateItemParams(itemToUpdate,item);
+        updateItemParams(itemToUpdate, item);
         itemToUpdate = itemRepository.save(itemToUpdate);
         log.info("item {} is updated", itemToUpdate);
         return itemMapper.convertToItemDto(itemToUpdate);
@@ -126,7 +126,7 @@ public class ItemServiceImpl implements ItemService {
         if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
-        text = "%"+text+"%";
+        text = "%" + text + "%";
         text = text.toUpperCase();
         return itemRepository.searchByQueryText(text).stream()
                 .map(itemMapper::convertToItemDto).collect(Collectors.toList());
@@ -152,7 +152,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(commentInputDto.getItemId()).orElseThrow(
                 () -> new ObjectNotFoundException("Item not found")
         );
-        String nowStr = Timestamp.from(Instant.now()).toString() + "Z";
+        String nowStr = Timestamp.from(Instant.now()) + "Z";
         Long count = bookingRepository.countByBookerIdAndItemIdAndStatus(author.getId(),
                 commentInputDto.getItemId(), Status.APPROVED.toString(), nowStr);
         if (count == 0) {

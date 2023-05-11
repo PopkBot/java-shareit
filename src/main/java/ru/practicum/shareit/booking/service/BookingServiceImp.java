@@ -34,12 +34,12 @@ public class BookingServiceImp implements BookingService {
     private final ItemRepository itemRepository;
 
     @Override
-    public BookingDto getBookingById(Long id,Long userId) {
+    public BookingDto getBookingById(Long id, Long userId) {
         Booking booking = bookingRepository.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Booking not found")
         );
 
-        if(!booking.getOwner().getId().equals(userId) && !booking.getBooker().getId().equals(userId)){
+        if (!booking.getOwner().getId().equals(userId) && !booking.getBooker().getId().equals(userId)) {
             throw new ObjectNotFoundException("Access denied");
         }
         log.info("Booking {} is returned", booking);
@@ -56,7 +56,7 @@ public class BookingServiceImp implements BookingService {
         Item item = itemRepository.findById(bookingInputDto.getItemId()).orElseThrow(
                 () -> new ObjectNotFoundException("Item not found")
         );
-        if(item.getUser().getId().equals(bookerId)){
+        if (item.getUser().getId().equals(bookerId)) {
             throw new ObjectNotFoundException("Owner cannot book own item");
         }
         /*
@@ -68,11 +68,11 @@ public class BookingServiceImp implements BookingService {
             throw new ValidationException("Booking dates overlap");
         }
          */
-        if(!item.getAvailable()){
+        if (!item.getAvailable()) {
             throw new ValidationException("Item is not available");
         }
-        Booking booking = setBooking(bookingInputDto,booker,item);
-        log.info("Booking {} is added",booking);
+        Booking booking = setBooking(bookingInputDto, booker, item);
+        log.info("Booking {} is added", booking);
         return bookingMapper.convertToBookingDto(bookingRepository.save(booking));
     }
 
@@ -81,48 +81,63 @@ public class BookingServiceImp implements BookingService {
     public BookingDto setApprovedStatus(Long bookingId, Long ownerId, boolean isApproved) {
 
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(
-                ()-> new ObjectNotFoundException("Booking not found")
+                () -> new ObjectNotFoundException("Booking not found")
         );
-        if(!booking.getOwner().getId().equals(ownerId)){
-            throw  new ObjectNotFoundException("This user is not the owner");
+        if (!booking.getOwner().getId().equals(ownerId)) {
+            throw new ObjectNotFoundException("This user is not the owner");
         }
-        if(booking.getStatus().equals(Status.APPROVED) && isApproved ||
-                booking.getStatus().equals(Status.REJECTED) && !isApproved){
+        if (booking.getStatus().equals(Status.APPROVED) && isApproved ||
+                booking.getStatus().equals(Status.REJECTED) && !isApproved) {
             throw new ValidationException("Cannot set same status");
         }
-        if(isApproved){
+        if (isApproved) {
             booking.setStatus(Status.APPROVED);
-        }else {
+        } else {
             booking.setStatus(Status.REJECTED);
         }
-        log.info("Booking {} status is updated to {}",bookingId,booking.getStatus());
+        log.info("Booking {} status is updated to {}", bookingId, booking.getStatus());
         return bookingMapper.convertToBookingDto(bookingRepository.save(booking));
     }
 
     @Override
-    public List<BookingDto> getBookingsOfUser(Long userId, String statusString,String userType) {
+    public List<BookingDto> getBookingsOfUser(Long userId, String statusString, String userType) {
 
         userRepository.findById(userId).orElseThrow(
-                ()-> new ObjectNotFoundException("User not found")
+                () -> new ObjectNotFoundException("User not found")
         );
-        if(Arrays.stream(Status.values()).noneMatch(status -> status.toString().equals(statusString))){
-            throw new ValidationException("Unknown state: "+statusString);
+        if (Arrays.stream(Status.values()).noneMatch(status -> status.toString().equals(statusString))) {
+            throw new ValidationException("Unknown state: " + statusString);
         }
         Status status = Status.valueOf(statusString);
         List<Booking> bookings;
-        String nowStr = Timestamp.from(Instant.now()).toString()+"Z";
-        switch (status){
-            case ALL: bookings = bookingRepository.getAllBookingsOfOwner(userId,userType);  break;
-            case APPROVED: bookings = bookingRepository
-                    .getBookingsOfOwnerByApproval(userId,Status.APPROVED.toString(),userType);break;
-            case REJECTED:bookings = bookingRepository
-                    .getBookingsOfOwnerByApproval(userId,Status.REJECTED.toString(),userType);break;
-            case WAITING:bookings = bookingRepository
-                    .getBookingsOfOwnerByApproval(userId,Status.WAITING.toString(),userType);break;
-            case FUTURE:bookings = bookingRepository.getFutureBookingsOfOwner(userId,nowStr,userType);break;
-            case CURRENT:bookings = bookingRepository.getCurrentBookingsOfOwner(userId,nowStr,userType);break;
-            case PAST:bookings = bookingRepository.getPastBookingsOfOwner(userId,nowStr,userType);break;
-            default: throw new ObjectNotFoundException("Unsupported status");
+        String nowStr = Timestamp.from(Instant.now()) + "Z";
+        switch (status) {
+            case ALL:
+                bookings = bookingRepository.getAllBookingsOfOwner(userId, userType);
+                break;
+            case APPROVED:
+                bookings = bookingRepository
+                        .getBookingsOfOwnerByApproval(userId, Status.APPROVED.toString(), userType);
+                break;
+            case REJECTED:
+                bookings = bookingRepository
+                        .getBookingsOfOwnerByApproval(userId, Status.REJECTED.toString(), userType);
+                break;
+            case WAITING:
+                bookings = bookingRepository
+                        .getBookingsOfOwnerByApproval(userId, Status.WAITING.toString(), userType);
+                break;
+            case FUTURE:
+                bookings = bookingRepository.getFutureBookingsOfOwner(userId, nowStr, userType);
+                break;
+            case CURRENT:
+                bookings = bookingRepository.getCurrentBookingsOfOwner(userId, nowStr, userType);
+                break;
+            case PAST:
+                bookings = bookingRepository.getPastBookingsOfOwner(userId, nowStr, userType);
+                break;
+            default:
+                throw new ObjectNotFoundException("Unsupported status");
         }
         log.info("list of bookings returned");
         return bookings.stream().map(bookingMapper::convertToBookingDto).collect(Collectors.toList());

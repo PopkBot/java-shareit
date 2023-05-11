@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface BookingService {
 
-    BookingDto getBookingById(Long id,Long userId);
+    BookingDto getBookingById(Long id, Long userId);
 
     BookingDto addBooking(BookingInputDto bookingInputDto, Long bookerId);
 
     BookingDto setApprovedStatus(Long bookingId, Long ownerId, boolean isApproved);
 
-    List<BookingDto> getBookingsOfUser(Long ownerId,String statusString,String userType);
+    List<BookingDto> getBookingsOfUser(Long ownerId, String statusString, String userType);
 }
