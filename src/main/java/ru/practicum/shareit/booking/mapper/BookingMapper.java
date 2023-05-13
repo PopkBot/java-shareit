@@ -12,6 +12,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingInputDto;
 import ru.practicum.shareit.booking.model.Booking;
 
+import java.time.ZoneOffset;
 import java.util.Date;
 
 
@@ -48,8 +49,8 @@ public class BookingMapper {
 
     public Booking convertToBooking(BookingInputDto bookingInputDto) {
         Booking booking = modelMapper.map(bookingInputDto, Booking.class);
-        booking.setStart(bookingInputDto.getStart().toInstant());
-        booking.setEnd(bookingInputDto.getEnd().toInstant());
+        booking.setStart(bookingInputDto.getStart().toInstant(ZoneOffset.ofHours(0)));
+        booking.setEnd(bookingInputDto.getEnd().toInstant(ZoneOffset.ofHours(0)));
         return booking;
     }
 

@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookerDtoInItem;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.exceptions.ObjectAlreadyExists;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -122,7 +123,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItem(String text, Long userId) {
+    public List<ItemDto> searchItem(String text) {
         if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
@@ -160,6 +161,10 @@ public class ItemServiceImpl implements ItemService {
         }
         if (item.getUser().getId().equals(author.getId())) {
             throw new ValidationException("Owner cannot leave comments");
+        }
+        boolean isContainAuthor = item.getComments().stream().anyMatch(comment -> comment.getAuthor().equals(author));
+        if (isContainAuthor) {
+            throw new ObjectAlreadyExists("Author is allowed to leave one comment");
         }
         Comment comment = commentRepository.save(makeComment(commentInputDto, author));
         item.getComments().add(comment);

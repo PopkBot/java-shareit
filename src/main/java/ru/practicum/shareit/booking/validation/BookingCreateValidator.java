@@ -6,7 +6,7 @@ import ru.practicum.shareit.exceptions.ValidationException;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 
 public class BookingCreateValidator implements ConstraintValidator<BookingCreate, BookingInputDto> {
@@ -14,9 +14,9 @@ public class BookingCreateValidator implements ConstraintValidator<BookingCreate
     @Override
     public boolean isValid(BookingInputDto booking, ConstraintValidatorContext constraintValidatorContext) {
 
-        Date start = booking.getStart();
-        Date end = booking.getEnd();
-        Date now = new Date();
+        LocalDateTime start = booking.getStart();
+        LocalDateTime end = booking.getEnd();
+        LocalDateTime now = LocalDateTime.now();
 
         if (start == null) {
             throw new ValidationException("Booking start date cannot be null");
@@ -27,13 +27,13 @@ public class BookingCreateValidator implements ConstraintValidator<BookingCreate
         if (start.equals(end)) {
             throw new ValidationException("Booking start date cannot be equal to end date");
         }
-        if (start.after(end)) {
+        if (start.isAfter(end)) {
             throw new ValidationException("Booking start date cannot be later end date");
         }
-        if (end.before(now)) {
+        if (end.isBefore(now)) {
             throw new ValidationException("Booking end date cannot be in the past");
         }
-        if (start.before(now)) {
+        if (start.isBefore(now)) {
             throw new ValidationException("Booking start date cannot be in the past");
         }
         return true;

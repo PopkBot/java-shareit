@@ -19,6 +19,7 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.temporal.TemporalAmount;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +39,9 @@ public class BookingServiceImp implements BookingService {
         Booking booking = bookingRepository.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Booking not found")
         );
-
+        userRepository.findById(userId).orElseThrow(
+                () -> new ObjectNotFoundException("User not found")
+        );
         if (!booking.getOwner().getId().equals(userId) && !booking.getBooker().getId().equals(userId)) {
             throw new ObjectNotFoundException("Access denied");
         }
@@ -59,15 +62,6 @@ public class BookingServiceImp implements BookingService {
         if (item.getUser().getId().equals(bookerId)) {
             throw new ObjectNotFoundException("Owner cannot book own item");
         }
-        /*
-        Long overlaps = bookingRepository.countDateOverlaps(
-                Timestamp.from(bookingInputDto.getStart().toInstant()).toString()+"Z",
-                Timestamp.from(bookingInputDto.getEnd().toInstant()).toString()+"Z",
-                item.getUser().getId());
-        if (overlaps > 0) {
-            throw new ValidationException("Booking dates overlap");
-        }
-         */
         if (!item.getAvailable()) {
             throw new ValidationException("Item is not available");
         }
@@ -90,8 +84,17 @@ public class BookingServiceImp implements BookingService {
                 booking.getStatus().equals(Status.REJECTED) && !isApproved) {
             throw new ValidationException("Cannot set same status");
         }
+        /*Long overlaps = bookingRepository.countDateOverlaps(
+                Timestamp.from(booking.getStart()).toString()+"Z",
+                Timestamp.from(booking.getEnd()).toString()+"Z",
+                ownerId);
+        if (overlaps > 0) {
+            throw new ValidationException("Cannot approve overlap bookings");
+        }*/
         if (isApproved) {
             booking.setStatus(Status.APPROVED);
+        } else if (booking.getEnd().isBefore(Instant.now()) && booking.getStatus().equals(Status.APPROVED)) {
+            throw new ValidationException("Cannot change completed booking");
         } else {
             booking.setStatus(Status.REJECTED);
         }

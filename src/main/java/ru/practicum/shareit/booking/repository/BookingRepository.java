@@ -7,11 +7,6 @@ import ru.practicum.shareit.booking.model.Booking;
 
 import java.util.List;
 
-/*
-Как хранится время в SQL вызвало у меня небывалые недоумения, я читал, что временные типы данных SQL работают "странно".
-Большую часть времени работы над этим ТЗ ушла на борьбу с часовыми зонами, тем как SQL жонглировал часами то прибавляя,
-то вычитая их. Я буду очень благодарен, если вы оставите литературу или комментарий как обуздать этого временного буйвола.
- */
 
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -25,7 +20,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Booking getBookingById(Long id);
 
     @Query(nativeQuery = true,
-            value = "select count(*) from bookings where not (start_date >= ?2 or ?1 >= end_date) and owner_id = ?3")
+            value = "select count(*) from bookings where not (start_date >= ?2 or ?1 >= end_date) and owner_id = ?3 " +
+                    "and status = 'APPROVED'")
     Long countDateOverlaps(String start, String end, Long ownerId);
 
     @Query(nativeQuery = true,
