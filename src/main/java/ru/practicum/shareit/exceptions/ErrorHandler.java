@@ -23,7 +23,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleObjectAlreadyExistsException(final ObjectAlreadyExists e) {
-        log.error(HttpStatus.NOT_FOUND.toString(), e);
+        log.error(HttpStatus.CONFLICT.toString(), e);
         return new ErrorResponse(e.getMessage());
     }
 

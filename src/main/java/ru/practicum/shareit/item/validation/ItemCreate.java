@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
 public @interface ItemCreate {
     String message() default "{Item is invalid for adding}";
 
-    Class<?>[] groups() default { };
+    Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default { };
+    Class<? extends Payload>[] payload() default {};
 }
 
 

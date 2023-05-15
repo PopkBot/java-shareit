@@ -1,25 +1,14 @@
 package ru.practicum.shareit.user.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import ru.practicum.shareit.user.projection.UserIdProjection;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.List;
 
-public interface UserRepository {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    List<User> getAllUsers();
 
-    User getUserById(Long userId);
+    UserIdProjection findByEmailIgnoreCaseAndIdNot(String email, Long userId);
 
-    User addUser(User user);
-
-    User updateUser(User user, Long userId);
-
-    User deleteUser(Long userId);
-
-    boolean isContainUser(Long id);
-
-    boolean isContainUser(User user);
-
-    boolean isContainUser(User user, Long userId);
 
 }

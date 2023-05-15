@@ -7,11 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = ItemUpdateValidator.class)
+@Constraint(validatedBy = CommentCreateValidator.class)
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ItemUpdate {
-    String message() default "{Item is invalid for update}";
+public @interface CommentCreate {
+    String message() default "{Comment is invalid for adding}";
 
     Class<?>[] groups() default {};
 
