@@ -31,7 +31,8 @@ public class ItemController {
     }
 
     @PostMapping("/items")
-    public ItemDto addItem(@ItemCreate @RequestBody Item item, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto addItem(@ItemCreate @RequestBody Item item,
+                           @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("adding new item {} requested", item);
         return itemService.addItem(item, userId);
     }
@@ -46,9 +47,11 @@ public class ItemController {
     }
 
     @GetMapping("/items/search")
-    public List<ItemDto> searchItem(@RequestParam String text) {
+    public List<ItemDto> searchItem(@RequestParam String text,
+                                    @RequestParam(required = false,defaultValue = "0")Integer from,
+                                    @RequestParam(required = false,defaultValue = "10")Integer size) {
         log.info("search for {}", text);
-        return itemService.searchItem(text);
+        return itemService.searchItem(text,from,size);
     }
 
     @DeleteMapping("/items/{itemId}")
@@ -58,9 +61,11 @@ public class ItemController {
     }
 
     @GetMapping("/items")
-    public List<ItemDto> getAllItemsOfUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getAllItemsOfUser(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                           @RequestParam(required = false,defaultValue = "0")Integer from,
+                                           @RequestParam(required = false,defaultValue = "10")Integer size) {
         log.info("all items of user {} are requested", userId);
-        return itemService.getAllItemsOfUser(userId);
+        return itemService.getAllItemsOfUser(userId,from,size);
     }
 
     @PostMapping("/items/{itemId}/comment")

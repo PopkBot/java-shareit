@@ -47,10 +47,14 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRequestRepository itemRequestRepository;
 
     @Override
-    public List<ItemDto> getAllItemsOfUser(Long userId) {
+    public List<ItemDto> getAllItemsOfUser(Long userId,Integer from,Integer size) {
         String nowStr = Timestamp.from(Instant.now()) + "Z";
         userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("user not found"));
-        List<ItemDto> itemDtos = itemRepository.findAllByUserId(userId).stream()
+        if(size<=0 || from<0){
+            throw new ValidationException("invalid page parameters");
+        }
+        List<Item> itemPage = itemRepository.findAllByUserId(userId,from,size);
+        List<ItemDto> itemDtos = itemPage.stream()
                 .map(item -> {
                             BookerDtoInItem bookingDtoNext = bookingMapper.convertToBookingDtoInItem(
                                     bookingRepository.getNextBooking(nowStr, item.getId()));
@@ -130,13 +134,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItem(String text) {
+    public List<ItemDto> searchItem(String text,Integer from, Integer size) {
         if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
+        if(size<=0 || from<0){
+            throw new ValidationException("invalid page parameters");
+        }
         text = "%" + text + "%";
         text = text.toUpperCase();
-        return itemRepository.searchByQueryText(text).stream()
+        List<Item> itemPage = itemRepository.searchByQueryText(text,from,size);
+        log.info("page of items is returned {}",itemPage);
+        return itemPage.stream()
                 .map(itemMapper::convertToItemDto).collect(Collectors.toList());
     }
 

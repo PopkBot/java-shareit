@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,37 +27,49 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Long countDateOverlaps(String start, String end, Long ownerId);
 
     @Query(nativeQuery = true,
-            value = "select * from bookings where " + TYPE_CASE + " = :user_id order by start_date desc")
+            value = "select * from bookings where " + TYPE_CASE + " = :user_id order by start_date desc "+
+                    "limit :size offset :from")
     List<Booking> getAllBookingsOfOwner(@Param(value = "user_id") Long userId,
-                                        @Param(value = "user_type") String userType);
+                                        @Param(value = "user_type") String userType,
+                                        @Param(value = "from") Integer from,
+                                        @Param(value = "size") Integer size);
 
     @Query(nativeQuery = true,
             value = "select * from bookings where " + TYPE_CASE +
-                    " = :user_id and status = :status order by start_date desc")
+                    " = :user_id and status = :status order by start_date desc "+
+                    "limit :size offset :from")
     List<Booking> getBookingsOfOwnerByApproval(@Param(value = "user_id") Long userId,
                                                @Param(value = "status") String status,
-                                               @Param(value = "user_type") String userType);
+                                               @Param(value = "user_type") String userType,
+                                               @Param(value = "from") Integer from,
+                                               @Param(value = "size") Integer size);
 
     @Query(nativeQuery = true,
             value = "select * from bookings where " + TYPE_CASE + " = :user_id " +
-                    "and end_date < :date order by start_date desc")
+                    "and end_date < :date order by start_date desc limit :size offset :from")
     List<Booking> getPastBookingsOfOwner(@Param(value = "user_id") Long userId,
                                          @Param(value = "date") String now,
-                                         @Param(value = "user_type") String userType);
+                                         @Param(value = "user_type") String userType,
+                                         @Param(value = "from") Integer from,
+                                         @Param(value = "size") Integer size);
 
     @Query(nativeQuery = true,
             value = "select * from bookings where " + TYPE_CASE + " = :user_id " +
-                    "and start_date > :date order by end_date desc")
+                    "and start_date > :date order by end_date desc limit :size offset :from")
     List<Booking> getFutureBookingsOfOwner(@Param(value = "user_id") Long userId,
                                            @Param(value = "date") String now,
-                                           @Param(value = "user_type") String userType);
+                                           @Param(value = "user_type") String userType,
+                                           @Param(value = "from") Integer from,
+                                           @Param(value = "size") Integer size);
 
     @Query(nativeQuery = true,
             value = "select * from bookings where " + TYPE_CASE + " = :user_id " +
-                    "and start_date <= :date and end_date >= :date order by start_date desc")
+                    "and start_date <= :date and end_date >= :date order by start_date desc limit :size offset :from")
     List<Booking> getCurrentBookingsOfOwner(@Param(value = "user_id") Long userId,
                                             @Param(value = "date") String now,
-                                            @Param(value = "user_type") String userType);
+                                            @Param(value = "user_type") String userType,
+                                            @Param(value = "from") Integer from,
+                                            @Param(value = "size") Integer size);
 
     @Query(nativeQuery = true,
             value = "select top 1 * from bookings where item_id = :item_id " +

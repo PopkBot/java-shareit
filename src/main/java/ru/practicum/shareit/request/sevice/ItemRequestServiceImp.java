@@ -76,9 +76,8 @@ public class ItemRequestServiceImp implements ItemRequestService {
             userId=-1L;
         }
         Sort sortByDate = Sort.by(Sort.Direction.ASC,"created");
-        Pageable page = PageRequest.of(from,size,sortByDate);
-        Page<ItemRequest> itemRequestPage = itemRequestRepository.findAllWithOutRequestingUser(userId,page);
-        List<ItemRequestDto> itemRequestDtos =  itemRequestPage.getContent().stream()
+        List<ItemRequest> itemRequestPage = itemRequestRepository.findAllWithOutRequestingUser(userId,from,size);
+        List<ItemRequestDto> itemRequestDtos =  itemRequestPage.stream()
                 .map(itemRequestMapper::convertToItemRequestDto)
                 .collect(Collectors.toList());
         log.info("Page of all item requests is returned {}",itemRequestDtos);
