@@ -1,5 +1,6 @@
-package ru.practicum.shareit.booking.validation;
+package ru.practicum.shareit.request.validation;
 
+import ru.practicum.shareit.booking.validation.BookingCreateValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -8,12 +9,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = BookingCreateValidator.class)
+@Constraint(validatedBy = ItemRequestCreateValidator.class)
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BookingCreate {
-
-    String message() default "{Booking is invalid for adding}";
+public @interface ItemRequestCreate {
+    String message() default "{Request is invalid for adding}";
 
     Class<?>[] groups() default {};
 

@@ -19,6 +19,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -42,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingMapper bookingMapper;
     private final CommentMapper commentMapper;
     private final CommentRepository commentRepository;
-
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     public List<ItemDto> getAllItemsOfUser(Long userId) {
@@ -89,10 +91,15 @@ public class ItemServiceImpl implements ItemService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("user not found"));
         item.setUser(user);
+        if(item.getRequestId()!=null){
+            ItemRequest itemRequest = itemRequestRepository.findById(item.getRequestId()).orElseThrow(
+                    ()-> new ObjectNotFoundException("item request not found")
+            );
+            itemRequest.getItems().add(item);
+        }
         Item addedItem = itemRepository.save(item);
         log.info("item {} is added", addedItem);
         return itemMapper.convertToItemDto(addedItem);
-
     }
 
     @Override

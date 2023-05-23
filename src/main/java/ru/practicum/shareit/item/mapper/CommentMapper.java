@@ -42,7 +42,7 @@ public class CommentMapper {
         commentDto.setCreated(commentDto.getCreated().plusHours(
                 TimeUnit.SECONDS.toHours(ZonedDateTime.now().getOffset().getTotalSeconds()))
         );
-        commentDto.setCreated(commentDto.getCreated().plusSeconds(100));
+        commentDto.setCreated(commentDto.getCreated().plusSeconds(0));
         return commentDto;
     }
 

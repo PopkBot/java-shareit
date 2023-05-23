@@ -1,7 +1,19 @@
 package ru.practicum.shareit.request.dto;
 
-/**
- * TODO Sprint add-item-requests.
- */
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+import ru.practicum.shareit.item.model.Item;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
 public class ItemRequestDto {
+
+    private Long id;
+    private String description;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime created;
+    private List<Item> items;
+
 }
