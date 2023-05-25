@@ -37,11 +37,14 @@ public class ItemMapper {
 
     public ItemDto convertToItemDto(Item item) {
         ItemDto itemDto = modelMapper.map(item, ItemDto.class);
-        List<CommentDto> commentDtos = item.getComments()
-                .stream()
-                .map(commentMapper::convertToCommentDto)
-                .collect(Collectors.toList());
-        itemDto.setComments(commentDtos);
+        if(item.getComments()!=null) {
+            List<CommentDto> commentDtos = item.getComments()
+                    .stream()
+                    .map(commentMapper::convertToCommentDto)
+                    .collect(Collectors.toList());
+
+            itemDto.setComments(commentDtos);
+        }
         return itemDto;
     }
 
@@ -50,11 +53,13 @@ public class ItemMapper {
         ItemDto itemDto = modelMapper.map(item, ItemDto.class);
         itemDto.setNextBooking(nextBooking);
         itemDto.setLastBooking(lastBooking);
-        List<CommentDto> commentDtos = item.getComments()
-                .stream()
-                .map(commentMapper::convertToCommentDto)
-                .collect(Collectors.toList());
-        itemDto.setComments(commentDtos);
+        if(item.getComments()!=null) {
+            List<CommentDto> commentDtos = item.getComments()
+                    .stream()
+                    .map(commentMapper::convertToCommentDto)
+                    .collect(Collectors.toList());
+            itemDto.setComments(commentDtos);
+        }
         return itemDto;
     }
 

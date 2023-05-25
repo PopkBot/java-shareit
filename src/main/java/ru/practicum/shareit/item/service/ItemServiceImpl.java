@@ -30,6 +30,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -169,14 +170,18 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(commentInputDto.getItemId()).orElseThrow(
                 () -> new ObjectNotFoundException("Item not found")
         );
+        if(item.getComments()==null){
+            item.setComments(new HashSet<>());
+        }
+
+        if (item.getUser().getId().equals(author.getId())) {
+            throw new ValidationException("Owner cannot leave comments");
+        }
         String nowStr = Timestamp.from(Instant.now()) + "Z";
         Long count = bookingRepository.countByBookerIdAndItemIdAndStatus(author.getId(),
                 commentInputDto.getItemId(), Status.APPROVED.toString(), nowStr);
         if (count == 0) {
             throw new ValidationException("User hasn`t booked this item");
-        }
-        if (item.getUser().getId().equals(author.getId())) {
-            throw new ValidationException("Owner cannot leave comments");
         }
         boolean isContainAuthor = item.getComments().stream().anyMatch(comment -> comment.getAuthor().equals(author));
         if (isContainAuthor) {

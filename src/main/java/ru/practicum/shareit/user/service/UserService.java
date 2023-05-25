@@ -17,5 +17,4 @@ public interface UserService {
 
     List<UserDto> getAllUsers();
 
-
 }
