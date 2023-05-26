@@ -11,10 +11,10 @@ public class ItemRequestCreateValidator implements ConstraintValidator<ItemReque
     @Override
     public boolean isValid(ItemRequestInputDto itemRequestInputDto,
                            ConstraintValidatorContext constraintValidatorContext) {
-        if(itemRequestInputDto == null){
+        if (itemRequestInputDto == null) {
             throw new ValidationException("Item request cannot be null");
         }
-        if(itemRequestInputDto.getDescription()== null || itemRequestInputDto.getDescription().isBlank()){
+        if (itemRequestInputDto.getDescription() == null || itemRequestInputDto.getDescription().isBlank()) {
             throw new ValidationException("Description cannot be blank");
         }
         return true;

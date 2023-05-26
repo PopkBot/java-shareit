@@ -48,13 +48,13 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRequestRepository itemRequestRepository;
 
     @Override
-    public List<ItemDto> getAllItemsOfUser(Long userId,Integer from,Integer size) {
+    public List<ItemDto> getAllItemsOfUser(Long userId, Integer from, Integer size) {
         String nowStr = Timestamp.from(Instant.now()) + "Z";
         userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("user not found"));
-        if(size<=0 || from<0){
+        if (size <= 0 || from < 0) {
             throw new ValidationException("invalid page parameters");
         }
-        List<Item> itemPage = itemRepository.findAllByUserId(userId,from,size);
+        List<Item> itemPage = itemRepository.findAllByUserId(userId, from, size);
         List<ItemDto> itemDtos = itemPage.stream()
                 .map(item -> {
                             BookerDtoInItem bookingDtoNext = bookingMapper.convertToBookingDtoInItem(
@@ -96,9 +96,9 @@ public class ItemServiceImpl implements ItemService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("user not found"));
         item.setUser(user);
-        if(item.getRequestId()!=null){
+        if (item.getRequestId() != null) {
             ItemRequest itemRequest = itemRequestRepository.findById(item.getRequestId()).orElseThrow(
-                    ()-> new ObjectNotFoundException("item request not found")
+                    () -> new ObjectNotFoundException("item request not found")
             );
             itemRequest.getItems().add(item);
         }
@@ -135,17 +135,17 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItem(String text,Integer from, Integer size) {
+    public List<ItemDto> searchItem(String text, Integer from, Integer size) {
         if (text == null || text.isBlank()) {
             return new ArrayList<>();
         }
-        if(size<=0 || from<0){
+        if (size <= 0 || from < 0) {
             throw new ValidationException("invalid page parameters");
         }
         text = "%" + text + "%";
         text = text.toUpperCase();
-        List<Item> itemPage = itemRepository.searchByQueryText(text,from,size);
-        log.info("page of items is returned {}",itemPage);
+        List<Item> itemPage = itemRepository.searchByQueryText(text, from, size);
+        log.info("page of items is returned {}", itemPage);
         return itemPage.stream()
                 .map(itemMapper::convertToItemDto).collect(Collectors.toList());
     }
@@ -170,7 +170,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(commentInputDto.getItemId()).orElseThrow(
                 () -> new ObjectNotFoundException("Item not found")
         );
-        if(item.getComments()==null){
+        if (item.getComments() == null) {
             item.setComments(new HashSet<>());
         }
 

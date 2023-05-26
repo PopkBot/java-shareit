@@ -48,10 +48,10 @@ public class ItemController {
 
     @GetMapping("/items/search")
     public List<ItemDto> searchItem(@RequestParam String text,
-                                    @RequestParam(required = false,defaultValue = "0")Integer from,
-                                    @RequestParam(required = false,defaultValue = "10")Integer size) {
+                                    @RequestParam(required = false, defaultValue = "0") Integer from,
+                                    @RequestParam(required = false, defaultValue = "10") Integer size) {
         log.info("search for {}", text);
-        return itemService.searchItem(text,from,size);
+        return itemService.searchItem(text, from, size);
     }
 
     @DeleteMapping("/items/{itemId}")
@@ -62,10 +62,10 @@ public class ItemController {
 
     @GetMapping("/items")
     public List<ItemDto> getAllItemsOfUser(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                           @RequestParam(required = false,defaultValue = "0")Integer from,
-                                           @RequestParam(required = false,defaultValue = "10")Integer size) {
+                                           @RequestParam(required = false, defaultValue = "0") Integer from,
+                                           @RequestParam(required = false, defaultValue = "10") Integer size) {
         log.info("all items of user {} are requested", userId);
-        return itemService.getAllItemsOfUser(userId,from,size);
+        return itemService.getAllItemsOfUser(userId, from, size);
     }
 
     @PostMapping("/items/{itemId}/comment")

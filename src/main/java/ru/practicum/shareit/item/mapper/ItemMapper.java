@@ -37,7 +37,7 @@ public class ItemMapper {
 
     public ItemDto convertToItemDto(Item item) {
         ItemDto itemDto = modelMapper.map(item, ItemDto.class);
-        if(item.getComments()!=null) {
+        if (item.getComments() != null) {
             List<CommentDto> commentDtos = item.getComments()
                     .stream()
                     .map(commentMapper::convertToCommentDto)
@@ -53,7 +53,7 @@ public class ItemMapper {
         ItemDto itemDto = modelMapper.map(item, ItemDto.class);
         itemDto.setNextBooking(nextBooking);
         itemDto.setLastBooking(lastBooking);
-        if(item.getComments()!=null) {
+        if (item.getComments() != null) {
             List<CommentDto> commentDtos = item.getComments()
                     .stream()
                     .map(commentMapper::convertToCommentDto)

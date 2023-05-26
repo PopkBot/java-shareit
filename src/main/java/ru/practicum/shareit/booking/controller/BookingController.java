@@ -39,8 +39,8 @@ public class BookingController {
     @GetMapping("/bookings/owner")
     public List<BookingDto> getBookingsOfOwner(@RequestHeader("X-Sharer-User-Id") Long ownerId,
                                                @RequestParam(required = false, defaultValue = "ALL") String state,
-                                               @RequestParam(required = false,defaultValue = "0")Integer from,
-                                               @RequestParam(required = false,defaultValue = "10")Integer size) {
+                                               @RequestParam(required = false, defaultValue = "0") Integer from,
+                                               @RequestParam(required = false, defaultValue = "10") Integer size) {
         log.info("All bookings of owner {}, status {}", ownerId, state);
         BookingRequestParamsDto bookingRequestParamsDto = BookingRequestParamsDto.builder()
                 .ownerId(ownerId)
@@ -62,8 +62,8 @@ public class BookingController {
     @GetMapping("/bookings")
     public List<BookingDto> getBookingsOfUser(@RequestHeader("X-Sharer-User-Id") Long ownerId,
                                               @RequestParam(required = false, defaultValue = "ALL") String state,
-                                              @RequestParam(required = false,defaultValue = "0")Integer from,
-                                              @RequestParam(required = false,defaultValue = "10")Integer size) {
+                                              @RequestParam(required = false, defaultValue = "0") Integer from,
+                                              @RequestParam(required = false, defaultValue = "10") Integer size) {
         log.info("All bookings of user {}, status {}", ownerId, state);
         BookingRequestParamsDto bookingRequestParamsDto = BookingRequestParamsDto.builder()
                 .ownerId(ownerId)

@@ -1,14 +1,11 @@
 package ru.practicum.shareit.booking.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.booking.model.Booking;
 
 import java.util.List;
-
 
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -27,7 +24,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Long countDateOverlaps(String start, String end, Long ownerId);
 
     @Query(nativeQuery = true,
-            value = "select * from bookings where " + TYPE_CASE + " = :user_id order by start_date desc "+
+            value = "select * from bookings where " + TYPE_CASE + " = :user_id order by start_date desc " +
                     "limit :size offset :from")
     List<Booking> getAllBookingsOfOwner(@Param(value = "user_id") Long userId,
                                         @Param(value = "user_type") String userType,
@@ -36,7 +33,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(nativeQuery = true,
             value = "select * from bookings where " + TYPE_CASE +
-                    " = :user_id and status = :status order by start_date desc "+
+                    " = :user_id and status = :status order by start_date desc " +
                     "limit :size offset :from")
     List<Booking> getBookingsOfOwnerByApproval(@Param(value = "user_id") Long userId,
                                                @Param(value = "status") String status,

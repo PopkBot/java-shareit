@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ItemService {
 
-    List<ItemDto> getAllItemsOfUser(Long userId,Integer from, Integer size);
+    List<ItemDto> getAllItemsOfUser(Long userId, Integer from, Integer size);
 
     ItemDto getItemById(Long itemId, Long userId);
 
@@ -17,7 +17,7 @@ public interface ItemService {
 
     ItemDto updateItem(Item item, Long userId);
 
-    List<ItemDto> searchItem(String text,Integer from,Integer size);
+    List<ItemDto> searchItem(String text, Integer from, Integer size);
 
     ItemDto deleteItem(Long itemId);
 

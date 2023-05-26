@@ -27,7 +27,7 @@ public class ItemRequestMapper {
         configuration.setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
-    public ItemRequestDto convertToItemRequestDto(ItemRequest itemRequest){
+    public ItemRequestDto convertToItemRequestDto(ItemRequest itemRequest) {
         ItemRequestDto itemRequestDto = modelMapper.map(itemRequest, ItemRequestDto.class);
         itemRequestDto.setCreated(itemRequest.getCreated().toLocalDateTime());
         return itemRequestDto;

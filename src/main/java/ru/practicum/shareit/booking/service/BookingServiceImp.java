@@ -2,9 +2,6 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -25,7 +22,6 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -97,7 +93,7 @@ public class BookingServiceImp implements BookingService {
         if (overlaps > 0) {
             throw new ValidationException("Cannot approve overlap bookings");
         }*/
-        LocalDateTime end = LocalDateTime.ofInstant(booking.getEnd(),ZoneId.of("UTC"));
+        LocalDateTime end = LocalDateTime.ofInstant(booking.getEnd(), ZoneId.of("UTC"));
         LocalDateTime now = LocalDateTime.now();
         if (isApproved) {
             booking.setStatus(Status.APPROVED);
@@ -121,7 +117,7 @@ public class BookingServiceImp implements BookingService {
         if (Arrays.stream(Status.values()).noneMatch(status -> status.toString().equals(paramsDto.getStatusString()))) {
             throw new ValidationException("Unknown state: " + paramsDto.getStatusString());
         }
-        if(paramsDto.getSize()<=0 || paramsDto.getFrom()<0){
+        if (paramsDto.getSize() <= 0 || paramsDto.getFrom() < 0) {
             throw new ValidationException("invalid page parameters");
         }
 
@@ -131,34 +127,34 @@ public class BookingServiceImp implements BookingService {
         switch (status) {
             case ALL:
                 bookings = bookingRepository.getAllBookingsOfOwner(paramsDto.getOwnerId(), paramsDto.getUserType(),
-                        paramsDto.getFrom(),paramsDto.getSize());
+                        paramsDto.getFrom(), paramsDto.getSize());
                 break;
             case APPROVED:
                 bookings = bookingRepository
                         .getBookingsOfOwnerByApproval(paramsDto.getOwnerId(), Status.APPROVED.toString(),
-                                paramsDto.getUserType(),paramsDto.getFrom(),paramsDto.getSize());
+                                paramsDto.getUserType(), paramsDto.getFrom(), paramsDto.getSize());
                 break;
             case REJECTED:
                 bookings = bookingRepository
                         .getBookingsOfOwnerByApproval(paramsDto.getOwnerId(), Status.REJECTED.toString(),
-                                paramsDto.getUserType(),paramsDto.getFrom(),paramsDto.getSize());
+                                paramsDto.getUserType(), paramsDto.getFrom(), paramsDto.getSize());
                 break;
             case WAITING:
                 bookings = bookingRepository
                         .getBookingsOfOwnerByApproval(paramsDto.getOwnerId(), Status.WAITING.toString(),
-                                paramsDto.getUserType(),paramsDto.getFrom(),paramsDto.getSize());
+                                paramsDto.getUserType(), paramsDto.getFrom(), paramsDto.getSize());
                 break;
             case FUTURE:
                 bookings = bookingRepository.getFutureBookingsOfOwner(paramsDto.getOwnerId(), nowStr,
-                        paramsDto.getUserType(),paramsDto.getFrom(),paramsDto.getSize());
+                        paramsDto.getUserType(), paramsDto.getFrom(), paramsDto.getSize());
                 break;
             case CURRENT:
                 bookings = bookingRepository.getCurrentBookingsOfOwner(paramsDto.getOwnerId(), nowStr,
-                        paramsDto.getUserType(),paramsDto.getFrom(),paramsDto.getSize());
+                        paramsDto.getUserType(), paramsDto.getFrom(), paramsDto.getSize());
                 break;
             case PAST:
                 bookings = bookingRepository.getPastBookingsOfOwner(paramsDto.getOwnerId(), nowStr,
-                        paramsDto.getUserType(),paramsDto.getFrom(),paramsDto.getSize());
+                        paramsDto.getUserType(), paramsDto.getFrom(), paramsDto.getSize());
                 break;
             default:
                 throw new ObjectNotFoundException("Unsupported status");

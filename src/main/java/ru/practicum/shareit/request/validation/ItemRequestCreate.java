@@ -1,7 +1,5 @@
 package ru.practicum.shareit.request.validation;
 
-import ru.practicum.shareit.booking.validation.BookingCreateValidator;
-
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.ElementType;
