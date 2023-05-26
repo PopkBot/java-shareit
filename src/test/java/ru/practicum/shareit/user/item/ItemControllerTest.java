@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.user.item;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;

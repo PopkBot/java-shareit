@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.user.item;
 
 
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest(
         properties = "db.name=test",
         webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class itemServiceImpTest {
+public class ItemServiceImpTest {
 
     private final ItemService itemService;
     private final UserService userService;
