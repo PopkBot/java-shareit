@@ -43,66 +43,6 @@ public class itemServiceImpTest {
     private final CommentMapper commentMapper;
 
 
-/*
-    @Test
-    void throwExceptionOnAddingInvalidItem(){
-
-        User user = User.builder()
-                .name("user")
-                .email("user@user.com")
-                .build();
-        Long userId = userService.createUser(user).getId();
-
-        Item itemBlankName = Item.builder()
-                .name(" ")
-                .description("description")
-                .available(true)
-                .build();
-
-        ValidationException exception = assertThrows(ValidationException.class,
-                ()->itemService.addItem(itemBlankName,userId));
-        assertEquals("name cannot be blank",exception.getMessage());
-
-        Item itemNullName = Item.builder()
-                .description("description")
-                .available(true)
-                .build();
-
-        exception = assertThrows(ValidationException.class,
-                ()->itemService.addItem(itemNullName,userId));
-        assertEquals("name cannot be blank",exception.getMessage());
-
-        Item itemBlankDescription = Item.builder()
-                .name("Amd")
-                .description(" ")
-                .available(true)
-                .build();
-
-        exception = assertThrows(ValidationException.class,
-                ()->itemService.addItem(itemBlankDescription,userId));
-        assertEquals("description cannot be blank",exception.getMessage());
-
-        Item itemNullDescription = Item.builder()
-                .name("Amd")
-                .available(true)
-                .build();
-
-        exception = assertThrows(ValidationException.class,
-                ()->itemService.addItem(itemBlankDescription,userId));
-        assertEquals("description cannot be blank",exception.getMessage());
-
-        Item itemNullAvailable = Item.builder()
-                .name("Amd")
-                .description("description")
-                .build();
-
-        exception = assertThrows(ValidationException.class,
-                ()->itemService.addItem(itemNullAvailable,userId));
-        assertEquals("available cannot be null",exception.getMessage());
-
-    }
-    */
-
     @Test
     void throwExceptionOnAddingItemWhenUserNotExists(){
 

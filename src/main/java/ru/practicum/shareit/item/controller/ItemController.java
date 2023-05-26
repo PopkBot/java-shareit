@@ -69,7 +69,9 @@ public class ItemController {
     }
 
     @PostMapping("/items/{itemId}/comment")
-    public CommentDto addComment(@PathVariable Long itemId, @RequestHeader("X-Sharer-User-Id") Long authorId, @CommentCreate @RequestBody CommentInputDto commentInputDto) {
+    public CommentDto addComment(@PathVariable Long itemId,
+                                 @RequestHeader("X-Sharer-User-Id") Long authorId,
+                                 @CommentCreate @RequestBody CommentInputDto commentInputDto) {
         commentInputDto.setAuthorId(authorId);
         commentInputDto.setItemId(itemId);
         log.info("Comment {} adding is requested", commentInputDto);

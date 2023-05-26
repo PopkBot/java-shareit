@@ -23,6 +23,9 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -94,9 +97,12 @@ public class BookingServiceImp implements BookingService {
         if (overlaps > 0) {
             throw new ValidationException("Cannot approve overlap bookings");
         }*/
+        LocalDateTime end = LocalDateTime.ofInstant(booking.getEnd(),ZoneId.of("UTC"));
+        LocalDateTime now = LocalDateTime.now();
         if (isApproved) {
             booking.setStatus(Status.APPROVED);
-        } else if (booking.getEnd().isBefore(Instant.now()) && booking.getStatus().equals(Status.APPROVED)) {
+        } else if (end.isBefore(now)
+                && booking.getStatus().equals(Status.APPROVED)) {
             throw new ValidationException("Cannot change completed booking");
         } else {
             booking.setStatus(Status.REJECTED);
@@ -111,6 +117,7 @@ public class BookingServiceImp implements BookingService {
         userRepository.findById(paramsDto.getOwnerId()).orElseThrow(
                 () -> new ObjectNotFoundException("User not found")
         );
+        paramsDto.setStatusString(paramsDto.getStatusString().toUpperCase());
         if (Arrays.stream(Status.values()).noneMatch(status -> status.toString().equals(paramsDto.getStatusString()))) {
             throw new ValidationException("Unknown state: " + paramsDto.getStatusString());
         }
