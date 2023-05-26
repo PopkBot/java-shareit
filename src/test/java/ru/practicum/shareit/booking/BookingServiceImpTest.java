@@ -91,7 +91,7 @@ public class BookingServiceImpTest {
         BookingDto bookingDto = bookingService.addBooking(bookingInputDto, booker.getId());
         assertEquals(bookingInputDto.getItemId(), bookingDto.getItem().getId());
         assertEquals(booker.getId(), bookingDto.getBooker().getId());
-        DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         assertEquals(bookingInputDto.getEnd().format(dTF),
                 bookingDto.getEnd().toInstant().atZone(ZoneOffset.ofHours(0)).format(dTF));
         assertEquals(bookingInputDto.getStart().format(dTF),
@@ -341,19 +341,4 @@ public class BookingServiceImpTest {
 
 
     }
-
-
-    /*
-      Booking booking = bookingRepository.findById(id).orElseThrow(
-                () -> new ObjectNotFoundException("Booking not found")
-        );
-        userRepository.findById(userId).orElseThrow(
-                () -> new ObjectNotFoundException("User not found")
-        );
-        if (!booking.getOwner().getId().equals(userId) && !booking.getBooker().getId().equals(userId)) {
-            throw new ObjectNotFoundException("Access denied");
-        }
-        log.info("Booking {} is returned", booking);
-        return bookingMapper.convertToBookingDto(booking);
-     */
 }
