@@ -1,6 +1,5 @@
 package ru.practicum.shareit.request;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,8 +12,6 @@ import ru.practicum.shareit.request.controller.ItemRequestController;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestInputDto;
 import ru.practicum.shareit.request.sevice.ItemRequestService;
-import ru.practicum.shareit.user.controller.UserController;
-import ru.practicum.shareit.user.service.UserService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -22,20 +19,20 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = ItemRequestController.class)
 public class ItemRequestControllerTest {
 
+    @Autowired
+    ObjectMapper mapper;
     @MockBean
     private ItemRequestService itemRequestService;
     @Autowired
     private MockMvc mvc;
-    @Autowired
-    ObjectMapper mapper;
-
     private ItemRequestDto itemRequestDto;
 
     @BeforeEach
@@ -56,10 +53,10 @@ public class ItemRequestControllerTest {
                 .thenReturn(itemRequestDto);
 
         mvc.perform(post("/requests")
-                .header("X-Sharer-User-Id", 1L)
-                .content(mapper.writeValueAsString(null))
-                .characterEncoding(StandardCharsets.UTF_8)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .header("X-Sharer-User-Id", 1L)
+                        .content(mapper.writeValueAsString(null))
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
         mvc.perform(post("/requests")
@@ -94,7 +91,7 @@ public class ItemRequestControllerTest {
     void testGetRequestsOfUser() throws Exception {
 
         when(itemRequestService.getItemRequestsOfUser(any()))
-                .thenReturn(List.of(itemRequestDto,itemRequestDto));
+                .thenReturn(List.of(itemRequestDto, itemRequestDto));
         mvc.perform(get("/requests").header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].description", is(itemRequestDto.getDescription()), String.class))
@@ -105,7 +102,7 @@ public class ItemRequestControllerTest {
     @Test
     void testGetRequestById() throws Exception {
 
-        when(itemRequestService.getItemRequestById(any(),any()))
+        when(itemRequestService.getItemRequestById(any(), any()))
                 .thenReturn(itemRequestDto);
         mvc.perform(get("/requests/1").header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
@@ -116,8 +113,8 @@ public class ItemRequestControllerTest {
     @Test
     void testGetAllRequests() throws Exception {
 
-        when(itemRequestService.getAllRequestsPaged(any(),any(),any()))
-                .thenReturn(List.of(itemRequestDto,itemRequestDto));
+        when(itemRequestService.getAllRequestsPaged(any(), any(), any()))
+                .thenReturn(List.of(itemRequestDto, itemRequestDto));
         mvc.perform(get("/requests/all").header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].description", is(itemRequestDto.getDescription()), String.class))

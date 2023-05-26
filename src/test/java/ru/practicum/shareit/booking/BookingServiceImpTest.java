@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingInputDto;
 import ru.practicum.shareit.booking.dto.BookingRequestParamsDto;
@@ -14,19 +13,17 @@ import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import javax.transaction.Transactional;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -230,11 +227,11 @@ public class BookingServiceImpTest {
                 .build();
 
         List<BookingDto> waitingBookings = bookingService.getBookingsOfUser(bookingRPDWaiting);
-        assertEquals(3,waitingBookings.size());
+        assertEquals(3, waitingBookings.size());
 
-        bookingDto1 = bookingService.setApprovedStatus(bookingDto1.getId(),owner.getId(),true);
-        bookingDto2 = bookingService.setApprovedStatus(bookingDto2.getId(),owner.getId(),true);
-        bookingDto3 = bookingService.setApprovedStatus(bookingDto3.getId(),owner.getId(),false);
+        bookingDto1 = bookingService.setApprovedStatus(bookingDto1.getId(), owner.getId(), true);
+        bookingDto2 = bookingService.setApprovedStatus(bookingDto2.getId(), owner.getId(), true);
+        bookingDto3 = bookingService.setApprovedStatus(bookingDto3.getId(), owner.getId(), false);
 
         BookingRequestParamsDto bookingRPDApproved = BookingRequestParamsDto.builder()
                 .userType("owner")
@@ -244,7 +241,7 @@ public class BookingServiceImpTest {
                 .size(10)
                 .build();
         List<BookingDto> approvedBookings = bookingService.getBookingsOfUser(bookingRPDApproved);
-        assertEquals(2,approvedBookings.size());
+        assertEquals(2, approvedBookings.size());
 
         BookingRequestParamsDto bookingRPDRejected = BookingRequestParamsDto.builder()
                 .userType("owner")
@@ -254,9 +251,9 @@ public class BookingServiceImpTest {
                 .size(10)
                 .build();
         List<BookingDto> rejectedBookings = bookingService.getBookingsOfUser(bookingRPDRejected);
-        assertEquals(1,rejectedBookings.size());
+        assertEquals(1, rejectedBookings.size());
 
-        bookingDto3 = bookingService.setApprovedStatus(bookingDto3.getId(),owner.getId(),true);
+        bookingDto3 = bookingService.setApprovedStatus(bookingDto3.getId(), owner.getId(), true);
         BookingRequestParamsDto bookingRPDPast = BookingRequestParamsDto.builder()
                 .userType("owner")
                 .statusString("PAST")
@@ -265,7 +262,7 @@ public class BookingServiceImpTest {
                 .size(10)
                 .build();
         List<BookingDto> pastBookings = bookingService.getBookingsOfUser(bookingRPDPast);
-        assertEquals(bookingDto1.getId(),pastBookings.get(0).getId());
+        assertEquals(bookingDto1.getId(), pastBookings.get(0).getId());
 
         BookingRequestParamsDto bookingRPDCurrent = BookingRequestParamsDto.builder()
                 .userType("owner")
@@ -275,7 +272,7 @@ public class BookingServiceImpTest {
                 .size(10)
                 .build();
         List<BookingDto> currentBookings = bookingService.getBookingsOfUser(bookingRPDCurrent);
-        assertEquals(bookingDto2.getId(),currentBookings.get(0).getId());
+        assertEquals(bookingDto2.getId(), currentBookings.get(0).getId());
 
         BookingRequestParamsDto bookingRPDFuture = BookingRequestParamsDto.builder()
                 .userType("owner")
@@ -285,13 +282,13 @@ public class BookingServiceImpTest {
                 .size(10)
                 .build();
         List<BookingDto> futureBookings = bookingService.getBookingsOfUser(bookingRPDFuture);
-        assertEquals(bookingDto3.getId(),futureBookings.get(0).getId());
+        assertEquals(bookingDto3.getId(), futureBookings.get(0).getId());
 
 
     }
 
     @Test
-    void testGetBookingById(){
+    void testGetBookingById() {
 
         User booker = User.builder()
                 .name("booker")
@@ -316,8 +313,8 @@ public class BookingServiceImpTest {
         item.setId(itemService.addItem(item, owner.getId()).getId());
 
         ObjectNotFoundException oe = assertThrows(ObjectNotFoundException.class,
-                ()->bookingService.getBookingById(-1L,owner.getId()));
-        assertEquals("Booking not found",oe.getMessage());
+                () -> bookingService.getBookingById(-1L, owner.getId()));
+        assertEquals("Booking not found", oe.getMessage());
 
         BookingInputDto bookingInputDto = BookingInputDto.builder()
                 .itemId(item.getId())
@@ -325,19 +322,18 @@ public class BookingServiceImpTest {
                 .end(LocalDateTime.now())
                 .build();
 
-        BookingDto createdBooking = bookingService.addBooking(bookingInputDto,booker.getId());
+        BookingDto createdBooking = bookingService.addBooking(bookingInputDto, booker.getId());
 
         oe = assertThrows(ObjectNotFoundException.class,
-                ()->bookingService.getBookingById(createdBooking.getId(),-1L));
-        assertEquals("User not found",oe.getMessage());
+                () -> bookingService.getBookingById(createdBooking.getId(), -1L));
+        assertEquals("User not found", oe.getMessage());
 
         oe = assertThrows(ObjectNotFoundException.class,
-                ()->bookingService.getBookingById(createdBooking.getId(),user.getId()));
-        assertEquals("Access denied",oe.getMessage());
+                () -> bookingService.getBookingById(createdBooking.getId(), user.getId()));
+        assertEquals("Access denied", oe.getMessage());
 
-        BookingDto returnedBookingDto = bookingService.getBookingById(createdBooking.getId(),booker.getId());
-        assertEquals(createdBooking,returnedBookingDto);
-
+        BookingDto returnedBookingDto = bookingService.getBookingById(createdBooking.getId(), booker.getId());
+        assertEquals(createdBooking, returnedBookingDto);
 
 
     }

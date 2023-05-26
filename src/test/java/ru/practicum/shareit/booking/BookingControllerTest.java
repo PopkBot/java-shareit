@@ -31,17 +31,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = BookingController.class)
 public class BookingControllerTest {
 
+    @Autowired
+    ObjectMapper mapper;
     @MockBean
     private BookingService bookingService;
     @Autowired
     private MockMvc mvc;
-    @Autowired
-    ObjectMapper mapper;
-
     private BookingDto bookingDto;
 
     @BeforeEach
-    void setUpBookingDto(){
+    void setUpBookingDto() {
         bookingDto = BookingDto.builder()
                 .id(1L)
                 .status(Status.APPROVED)
@@ -134,7 +133,7 @@ public class BookingControllerTest {
     @Test
     void testSetApprovedStatus() throws Exception {
 
-        when(bookingService.setApprovedStatus(any(),any(),anyBoolean()))
+        when(bookingService.setApprovedStatus(any(), any(), anyBoolean()))
                 .thenReturn(bookingDto);
         mvc.perform(patch("/bookings/1?approved=true")
                         .header("X-Sharer-User-Id", 1L))
@@ -147,7 +146,7 @@ public class BookingControllerTest {
     void testBookingsOfOwner() throws Exception {
 
         when(bookingService.getBookingsOfUser(any()))
-                .thenReturn(List.of(bookingDto,bookingDto));
+                .thenReturn(List.of(bookingDto, bookingDto));
         mvc.perform(get("/bookings/owner?state=All&from=0&size=10")
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
@@ -159,7 +158,7 @@ public class BookingControllerTest {
     void testBookingsOfBooker() throws Exception {
 
         when(bookingService.getBookingsOfUser(any()))
-                .thenReturn(List.of(bookingDto,bookingDto));
+                .thenReturn(List.of(bookingDto, bookingDto));
         mvc.perform(get("/bookings?state=All&from=0&size=10")
                         .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
@@ -170,10 +169,10 @@ public class BookingControllerTest {
     @Test
     void testGetBookingById() throws Exception {
 
-        when(bookingService.getBookingById(any(),any()))
+        when(bookingService.getBookingById(any(), any()))
                 .thenReturn(bookingDto);
         mvc.perform(get("/bookings/1")
-                .header("X-Sharer-User-Id", 1L))
+                        .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(bookingDto.getId()), Long.class));
 

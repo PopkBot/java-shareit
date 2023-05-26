@@ -11,11 +11,10 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import javax.transaction.Transactional;
-
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -27,38 +26,37 @@ class UserServiceImplTest {
     private final UserService userService;
 
 
-
     @Test
     void createUserValidationException() {
         User userBlankName = User.builder()
                 .name(" ")
                 .email("user@user.com")
                 .build();
-        ValidationException exception = assertThrows(ValidationException.class,()->userService.createUser(userBlankName));
-        assertEquals("name cannot be blank",exception.getMessage());
+        ValidationException exception = assertThrows(ValidationException.class, () -> userService.createUser(userBlankName));
+        assertEquals("name cannot be blank", exception.getMessage());
 
         User userNullName = User.builder()
                 .email("user@user.com")
                 .build();
-        exception = assertThrows(ValidationException.class,()->userService.createUser(userNullName));
-        assertEquals("name cannot be blank",exception.getMessage());
+        exception = assertThrows(ValidationException.class, () -> userService.createUser(userNullName));
+        assertEquals("name cannot be blank", exception.getMessage());
 
         User userNullEmail = User.builder()
                 .name("Ams")
                 .build();
-        exception = assertThrows(ValidationException.class,()->userService.createUser(userNullEmail));
-        assertEquals("email cannot be blank",exception.getMessage());
+        exception = assertThrows(ValidationException.class, () -> userService.createUser(userNullEmail));
+        assertEquals("email cannot be blank", exception.getMessage());
 
         User userWrongEmailFormat = User.builder()
                 .name("Ams")
                 .email("incorrectEmail.m")
                 .build();
-        exception = assertThrows(ValidationException.class,()->userService.createUser(userWrongEmailFormat));
-        assertEquals("wrong email format",exception.getMessage());
+        exception = assertThrows(ValidationException.class, () -> userService.createUser(userWrongEmailFormat));
+        assertEquals("wrong email format", exception.getMessage());
     }
 
     @Test
-    void createUserSuccess(){
+    void createUserSuccess() {
         User user = User.builder()
                 .name("Amd")
                 .email("user@user.com")
@@ -73,12 +71,12 @@ class UserServiceImplTest {
                 .email("user@user.com")
                 .build();
 
-        assertEquals(expectedUserDto,createdUserDto);
+        assertEquals(expectedUserDto, createdUserDto);
 
     }
 
     @Test
-    void throwExceptionOnCreateOfSameUser(){
+    void throwExceptionOnCreateOfSameUser() {
         User user1 = User.builder()
                 .name("Amd")
                 .email("user@user.com")
@@ -91,8 +89,8 @@ class UserServiceImplTest {
 
 
         userService.createUser(user1);
-        ObjectAlreadyExists exception = assertThrows(ObjectAlreadyExists.class,()->userService.createUser(user2));
-        assertEquals("unable to create user: user already exists",exception.getMessage());
+        ObjectAlreadyExists exception = assertThrows(ObjectAlreadyExists.class, () -> userService.createUser(user2));
+        assertEquals("unable to create user: user already exists", exception.getMessage());
     }
 
 
@@ -109,31 +107,31 @@ class UserServiceImplTest {
                 .name("Amd")
                 .email("incorrectEmailFormat")
                 .build();
-        ValidationException exception = assertThrows(ValidationException.class,()->userService.updateUser(user2,userId));
-        assertEquals("wrong email format",exception.getMessage());
+        ValidationException exception = assertThrows(ValidationException.class, () -> userService.updateUser(user2, userId));
+        assertEquals("wrong email format", exception.getMessage());
 
         User user3 = User.builder()
                 .name("Amd")
                 .email("")
                 .build();
-        exception = assertThrows(ValidationException.class,()->userService.updateUser(user3,userId));
-        assertEquals("wrong email format",exception.getMessage());
+        exception = assertThrows(ValidationException.class, () -> userService.updateUser(user3, userId));
+        assertEquals("wrong email format", exception.getMessage());
 
     }
 
     @Test
-    void updateNonExistingUser(){
+    void updateNonExistingUser() {
 
         User user = User.builder()
                 .name("Amd")
                 .email("user@user.com")
                 .build();
-        ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,()->userService.updateUser(user,-1L));
-        assertEquals("unable to update user: user not found",exception.getMessage());
+        ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> userService.updateUser(user, -1L));
+        assertEquals("unable to update user: user not found", exception.getMessage());
     }
 
     @Test
-    void updateOnAlreadyExistingUser(){
+    void updateOnAlreadyExistingUser() {
 
         User user1 = User.builder()
                 .name("Amd")
@@ -151,83 +149,82 @@ class UserServiceImplTest {
                 .name("Amd2U")
                 .email("user@user.com")
                 .build();
-        ObjectAlreadyExists exception = assertThrows(ObjectAlreadyExists.class,()->userService.updateUser(user2Up,userId));
-        assertEquals("unable to update user: same user already exists",exception.getMessage());
+        ObjectAlreadyExists exception = assertThrows(ObjectAlreadyExists.class, () -> userService.updateUser(user2Up, userId));
+        assertEquals("unable to update user: same user already exists", exception.getMessage());
     }
 
     @Test
-    void updateUserSuccessful(){
-
+    void updateUserSuccessful() {
 
 
         User user1 = User.builder()
                 .name("Amd")
                 .email("user@user.com")
                 .build();
-        Long userId=userService.createUser(user1).getId();
+        Long userId = userService.createUser(user1).getId();
         User user1UpName = User.builder()
                 .name("AmdUp")
                 .build();
-        userService.updateUser(user1UpName,userId);
+        userService.updateUser(user1UpName, userId);
 
         UserDto updatedUserDto = UserDto.builder()
                 .id(userId)
                 .name("AmdUp")
                 .email("user@user.com")
                 .build();
-        assertEquals(updatedUserDto,userService.getUserById(userId));
+        assertEquals(updatedUserDto, userService.getUserById(userId));
 
         User user1UpEmail = User.builder()
                 .email("userUp@user.com")
                 .build();
-        userService.updateUser(user1UpEmail,userId);
+        userService.updateUser(user1UpEmail, userId);
 
         updatedUserDto = UserDto.builder()
                 .id(userId)
                 .name("AmdUp")
                 .email("userUp@user.com")
                 .build();
-        assertEquals(updatedUserDto,userService.getUserById(userId));
+        assertEquals(updatedUserDto, userService.getUserById(userId));
     }
 
     @Test
-    void throwExceptionOnDeletingNonExistingUser(){
+    void throwExceptionOnDeletingNonExistingUser() {
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
-                ()->userService.deleteUser(-1L));
-        assertEquals("unable to delete user: user not exists",exception.getMessage());
+                () -> userService.deleteUser(-1L));
+        assertEquals("unable to delete user: user not exists", exception.getMessage());
     }
 
     @Test
-    void deleteExistingUserSuccessful(){
+    void deleteExistingUserSuccessful() {
 
         User user1 = User.builder()
                 .name("Amd")
                 .email("user@user.com")
                 .build();
-        Long userId=userService.createUser(user1).getId();
+        Long userId = userService.createUser(user1).getId();
 
         UserDto expectedUserDto = userService.getUserById(userId);
 
         UserDto deletedUserDto = userService.deleteUser(userId);
-        assertEquals(expectedUserDto,deletedUserDto);
+        assertEquals(expectedUserDto, deletedUserDto);
     }
 
     @Test
-    void testGetAllUsers(){
+    void testGetAllUsers() {
 
-        assertEquals(0,userService.getAllUsers().size());
+        assertEquals(0, userService.getAllUsers().size());
 
         ArrayList<UserDto> userDtos = new ArrayList<>();
-        for(int i=0;i<9;i++){
+        for (int i = 0; i < 9; i++) {
             User user = User.builder()
-                    .name("Amd"+i)
-                    .email("user"+i+"@user.com")
+                    .name("Amd" + i)
+                    .email("user" + i + "@user.com")
                     .build();
             userDtos.add(userService.createUser(user));
         }
         ArrayList<UserDto> returnedUserDtos = (ArrayList<UserDto>) userService.getAllUsers();
-        assertEquals(userDtos.size(),returnedUserDtos.size());
-        assertEquals(userDtos,returnedUserDtos);
+        assertEquals(userDtos.size(), returnedUserDtos.size());
+        assertEquals(userDtos, returnedUserDtos);
     }
 
 }

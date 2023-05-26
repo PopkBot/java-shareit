@@ -15,6 +15,6 @@ public interface ItemRequestRepository extends JpaRepository<ItemRequest, Long> 
 
     @Query(nativeQuery = true,
             value = "SELECT * FROM item_requests WHERE requesting_user_id <> ?1 limit ?3 offset ?2")
-    List<ItemRequest> findAllWithOutRequestingUser(Long userId, Integer from, Integer Size);
+    List<ItemRequest> findAllWithOutRequestingUser(Long userId, Integer from, Integer size);
 
 }

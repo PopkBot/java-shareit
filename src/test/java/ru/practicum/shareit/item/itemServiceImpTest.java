@@ -21,13 +21,14 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -44,7 +45,7 @@ public class itemServiceImpTest {
 
 
     @Test
-    void throwExceptionOnAddingItemWhenUserNotExists(){
+    void throwExceptionOnAddingItemWhenUserNotExists() {
 
         Item item = Item.builder()
                 .name("name")
@@ -53,12 +54,12 @@ public class itemServiceImpTest {
                 .build();
 
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
-                ()->itemService.addItem(item,-1L));
-        assertEquals("user not found",exception.getMessage());
+                () -> itemService.addItem(item, -1L));
+        assertEquals("user not found", exception.getMessage());
     }
 
     @Test
-    void addItemTest(){
+    void addItemTest() {
 
         User user = User.builder()
                 .name("user")
@@ -74,14 +75,14 @@ public class itemServiceImpTest {
 
         ItemDto expectedItemDto = itemMapper.convertToItemDto(item);
 
-        ItemDto itemDto = itemService.addItem(item,userId);
+        ItemDto itemDto = itemService.addItem(item, userId);
         expectedItemDto.setId(itemDto.getId());
-        assertEquals(expectedItemDto,itemDto);
+        assertEquals(expectedItemDto, itemDto);
 
     }
 
     @Test
-    void throwExceptionOnItemUpdatingWhenUserIsInvalid(){
+    void throwExceptionOnItemUpdatingWhenUserIsInvalid() {
 
         Item item = Item.builder()
                 .name("item")
@@ -94,20 +95,20 @@ public class itemServiceImpTest {
                 .email("user@user.com")
                 .build();
         Long userId = userService.createUser(user).getId();
-        item.setId(itemService.addItem(item,userId).getId());
+        item.setId(itemService.addItem(item, userId).getId());
 
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
-                ()->itemService.updateItem(item,-1L));
-        assertEquals("user doesn`t pertain this item",exception.getMessage());
+                () -> itemService.updateItem(item, -1L));
+        assertEquals("user doesn`t pertain this item", exception.getMessage());
 
         item.setId(-1L);
         exception = assertThrows(ObjectNotFoundException.class,
-                ()->itemService.updateItem(item,userId));
-        assertEquals("item not exists",exception.getMessage());
+                () -> itemService.updateItem(item, userId));
+        assertEquals("item not exists", exception.getMessage());
     }
 
     @Test
-    void testUpdateItem(){
+    void testUpdateItem() {
 
         Item item = Item.builder()
                 .name("item")
@@ -121,7 +122,7 @@ public class itemServiceImpTest {
                 .build();
 
         Long userId = userService.createUser(user).getId();
-        item.setId(itemService.addItem(item,userId).getId());
+        item.setId(itemService.addItem(item, userId).getId());
 
         Item itemUpdate = Item.builder()
                 .id(item.getId())
@@ -131,16 +132,16 @@ public class itemServiceImpTest {
                 .build();
 
         ItemDto expectedItemDto = itemMapper.convertToItemDto(itemUpdate);
-        ItemDto itemDto = itemService.updateItem(itemUpdate,userId);
-        assertEquals(expectedItemDto,itemDto);
+        ItemDto itemDto = itemService.updateItem(itemUpdate, userId);
+        assertEquals(expectedItemDto, itemDto);
     }
 
     @Test
-    void testDeleteItem(){
+    void testDeleteItem() {
 
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
-                ()->itemService.deleteItem(-1L));
-        assertEquals("item not exists",exception.getMessage());
+                () -> itemService.deleteItem(-1L));
+        assertEquals("item not exists", exception.getMessage());
 
         Item item = Item.builder()
                 .name("item")
@@ -153,14 +154,14 @@ public class itemServiceImpTest {
                 .email("user@user.com")
                 .build();
         Long userId = userService.createUser(user).getId();
-        item.setId(itemService.addItem(item,userId).getId());
+        item.setId(itemService.addItem(item, userId).getId());
         ItemDto expectedItemDto = itemMapper.convertToItemDto(item);
         ItemDto itemDto = itemService.deleteItem(item.getId());
-        assertEquals(expectedItemDto,itemDto);
+        assertEquals(expectedItemDto, itemDto);
     }
 
     @Test
-    void testExceptionsOnCommentAdding(){
+    void testExceptionsOnCommentAdding() {
 
         Item item = Item.builder()
                 .name("item")
@@ -179,7 +180,7 @@ public class itemServiceImpTest {
                 .build();
         Long booker1Id = userService.createUser(booker1).getId();
 
-        item.setId(itemService.addItem(item,ownerId).getId());
+        item.setId(itemService.addItem(item, ownerId).getId());
 
         CommentInputDto commentInputDto = CommentInputDto.builder()
                 .text("comment")
@@ -188,29 +189,29 @@ public class itemServiceImpTest {
                 .build();
 
         ObjectNotFoundException oe = assertThrows(ObjectNotFoundException.class,
-                ()->itemService.addComment(commentInputDto));
-        assertEquals("User not found",oe.getMessage());
+                () -> itemService.addComment(commentInputDto));
+        assertEquals("User not found", oe.getMessage());
 
         commentInputDto.setAuthorId(booker1Id);
 
         oe = assertThrows(ObjectNotFoundException.class,
-                ()->itemService.addComment(commentInputDto));
-        assertEquals("Item not found",oe.getMessage());
+                () -> itemService.addComment(commentInputDto));
+        assertEquals("Item not found", oe.getMessage());
 
         commentInputDto.setItemId(item.getId());
         ValidationException ve = assertThrows(ValidationException.class,
-                ()->itemService.addComment(commentInputDto));
-        assertEquals("User hasn`t booked this item",ve.getMessage());
+                () -> itemService.addComment(commentInputDto));
+        assertEquals("User hasn`t booked this item", ve.getMessage());
 
         commentInputDto.setAuthorId(ownerId);
         ve = assertThrows(ValidationException.class,
-                ()->itemService.addComment(commentInputDto));
-        assertEquals("Owner cannot leave comments",ve.getMessage());
+                () -> itemService.addComment(commentInputDto));
+        assertEquals("Owner cannot leave comments", ve.getMessage());
 
     }
 
     @Test
-    void testAddComment(){
+    void testAddComment() {
 
 
         Item item = Item.builder()
@@ -230,7 +231,7 @@ public class itemServiceImpTest {
                 .build();
         Long booker1Id = userService.createUser(booker1).getId();
 
-        item.setId(itemService.addItem(item,ownerId).getId());
+        item.setId(itemService.addItem(item, ownerId).getId());
 
         CommentInputDto commentInputDto = CommentInputDto.builder()
                 .text("comment")
@@ -242,9 +243,9 @@ public class itemServiceImpTest {
                 .itemId(item.getId())
                 .start(LocalDateTime.now().minusHours(2))
                 .end(LocalDateTime.now().minusHours(1))
-                .build(),booker1Id);
+                .build(), booker1Id);
 
-        bookingService.setApprovedStatus(bookingDto.getId(),ownerId,true);
+        bookingService.setApprovedStatus(bookingDto.getId(), ownerId, true);
 
         CommentDto expectedCommentDto = CommentDto.builder()
                 .authorName(booker1.getName())
@@ -255,18 +256,18 @@ public class itemServiceImpTest {
         expectedCommentDto.setId(createCommentDto.getId());
         expectedCommentDto.setCreated(createCommentDto.getCreated());
 
-        CommentDto getCommentDto = itemService.getItemById(item.getId(),ownerId).getComments().get(0);
-        assertEquals(expectedCommentDto,createCommentDto);
-        assertEquals(expectedCommentDto,getCommentDto);
+        CommentDto getCommentDto = itemService.getItemById(item.getId(), ownerId).getComments().get(0);
+        assertEquals(expectedCommentDto, createCommentDto);
+        assertEquals(expectedCommentDto, getCommentDto);
 
 
         ObjectAlreadyExists ae = assertThrows(ObjectAlreadyExists.class,
-                ()->itemService.addComment(commentInputDto));
-        assertEquals("Author is allowed to leave one comment",ae.getMessage());
+                () -> itemService.addComment(commentInputDto));
+        assertEquals("Author is allowed to leave one comment", ae.getMessage());
     }
 
     @Test
-    void getAllItemsWithComments(){
+    void getAllItemsWithComments() {
 
 
         Item item1 = Item.builder()
@@ -298,8 +299,8 @@ public class itemServiceImpTest {
                 .build();
         Long booker2Id = userService.createUser(booker2).getId();
 
-        item1.setId(itemService.addItem(item1,ownerId).getId());
-        item2.setId(itemService.addItem(item2,ownerId).getId());
+        item1.setId(itemService.addItem(item1, ownerId).getId());
+        item2.setId(itemService.addItem(item2, ownerId).getId());
 
         CommentInputDto commentInputDto = CommentInputDto.builder()
                 .text("comment")
@@ -311,18 +312,17 @@ public class itemServiceImpTest {
                 .itemId(item1.getId())
                 .start(LocalDateTime.now().minusHours(2))
                 .end(LocalDateTime.now().minusHours(1))
-                .build(),booker1Id);
+                .build(), booker1Id);
 
         BookingDto bookingDto2 = bookingService.addBooking(BookingInputDto.builder()
                 .itemId(item1.getId())
                 .start(LocalDateTime.now().plusHours(1))
                 .end(LocalDateTime.now().plusHours(2))
-                .build(),booker2Id);
+                .build(), booker2Id);
 
 
-
-        bookingService.setApprovedStatus(bookingDto1.getId(),ownerId,true);
-        bookingService.setApprovedStatus(bookingDto2.getId(),ownerId,true);
+        bookingService.setApprovedStatus(bookingDto1.getId(), ownerId, true);
+        bookingService.setApprovedStatus(bookingDto2.getId(), ownerId, true);
 
         CommentDto createCommentDto = itemService.addComment(commentInputDto);
 
@@ -350,15 +350,15 @@ public class itemServiceImpTest {
                 .comments(null)
                 .build();
 
-        ArrayList<ItemDto> itemDtos = (ArrayList<ItemDto>) itemService.getAllItemsOfUser(ownerId,0,10);
-        assertEquals(2,itemDtos.size());
-        assertEquals(item1Dto,itemDtos.get(0));
-        assertEquals(item2Dto,itemDtos.get(1));
+        ArrayList<ItemDto> itemDtos = (ArrayList<ItemDto>) itemService.getAllItemsOfUser(ownerId, 0, 10);
+        assertEquals(2, itemDtos.size());
+        assertEquals(item1Dto, itemDtos.get(0));
+        assertEquals(item2Dto, itemDtos.get(1));
 
     }
 
     @Test
-    void testSearch(){
+    void testSearch() {
 
         User owner = User.builder()
                 .name("owner")
@@ -383,15 +383,15 @@ public class itemServiceImpTest {
                 .available(false)
                 .build();
 
-        item1.setId(itemService.addItem(item1,ownerId).getId());
-        item2.setId(itemService.addItem(item2,ownerId).getId());
-        item3.setId(itemService.addItem(item3,ownerId).getId());
+        item1.setId(itemService.addItem(item1, ownerId).getId());
+        item2.setId(itemService.addItem(item2, ownerId).getId());
+        item3.setId(itemService.addItem(item3, ownerId).getId());
 
 
-        ArrayList<ItemDto> searchList = (ArrayList<ItemDto>) itemService.searchItem("ITEM",0,10);
-        assertEquals(2,searchList.size());
-        assertEquals(item1.getId(),searchList.get(0).getId());
-        assertEquals(item2.getId(),searchList.get(1).getId());
+        ArrayList<ItemDto> searchList = (ArrayList<ItemDto>) itemService.searchItem("ITEM", 0, 10);
+        assertEquals(2, searchList.size());
+        assertEquals(item1.getId(), searchList.get(0).getId());
+        assertEquals(item2.getId(), searchList.get(1).getId());
 
     }
 

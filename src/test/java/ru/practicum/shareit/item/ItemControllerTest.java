@@ -15,10 +15,12 @@ import ru.practicum.shareit.item.dto.CommentInputDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
+
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -30,13 +32,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ItemControllerTest {
 
 
+    @Autowired
+    ObjectMapper mapper;
     @MockBean
     private ItemService itemService;
     @Autowired
     private MockMvc mvc;
-    @Autowired
-    ObjectMapper mapper;
-
     private ItemDto itemDto;
 
     @BeforeEach
@@ -59,7 +60,7 @@ public class ItemControllerTest {
                 .build();
 
         mvc.perform(post("/items")
-                        .header("X-Sharer-User-Id",1L)
+                        .header("X-Sharer-User-Id", 1L)
                         .content(mapper.writeValueAsString(itemBlankName))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -71,7 +72,7 @@ public class ItemControllerTest {
                 .build();
 
         mvc.perform(post("/items")
-                        .header("X-Sharer-User-Id",1L)
+                        .header("X-Sharer-User-Id", 1L)
                         .content(mapper.writeValueAsString(itemNullName))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -84,7 +85,7 @@ public class ItemControllerTest {
                 .build();
 
         mvc.perform(post("/items")
-                        .header("X-Sharer-User-Id",1L)
+                        .header("X-Sharer-User-Id", 1L)
                         .content(mapper.writeValueAsString(itemBlankDescription))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -96,7 +97,7 @@ public class ItemControllerTest {
                 .build();
 
         mvc.perform(post("/items")
-                        .header("X-Sharer-User-Id",1L)
+                        .header("X-Sharer-User-Id", 1L)
                         .content(mapper.writeValueAsString(itemNullAvailable))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -116,7 +117,7 @@ public class ItemControllerTest {
         when(itemService.addItem(any(), any()))
                 .thenReturn(itemDto);
         mvc.perform(post("/items")
-                        .header("X-Sharer-User-Id",1L)
+                        .header("X-Sharer-User-Id", 1L)
                         .content(mapper.writeValueAsString(item))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -135,7 +136,7 @@ public class ItemControllerTest {
 
 
         mvc.perform(get("/items/1")
-                        .header("X-Sharer-User-Id",1L))
+                        .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(itemDto.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(itemDto.getName()), String.class))
@@ -156,7 +157,7 @@ public class ItemControllerTest {
                 .build();
 
         mvc.perform(patch("/items/1")
-                        .header("X-Sharer-User-Id",1L)
+                        .header("X-Sharer-User-Id", 1L)
                         .content(mapper.writeValueAsString(item))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -202,7 +203,7 @@ public class ItemControllerTest {
                 .thenReturn(List.of(itemDto, itemDto));
 
         mvc.perform(get("/items")
-                        .header("X-Sharer-User-Id",1L))
+                        .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].id", is(itemDto.getId()), Long.class))
                 .andExpect(jsonPath("$.[0].name", is(itemDto.getName()), String.class))
@@ -237,7 +238,7 @@ public class ItemControllerTest {
                 .build();
 
         mvc.perform(post("/items/1/comment")
-                        .header("X-Sharer-User-Id",1L)
+                        .header("X-Sharer-User-Id", 1L)
                         .content(mapper.writeValueAsString(commentInputDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON))

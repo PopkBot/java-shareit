@@ -28,14 +28,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JsonTest
 public class ShareItJsonTest {
 
+    private final DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     @Autowired
     private JacksonTester<ItemRequestDto> itemRDJson;
     @Autowired
     private JacksonTester<CommentDto> commentDtoJson;
     @Autowired
     private JacksonTester<BookingDto> bookingDtoJson;
-
-    private final DateTimeFormatter dTF = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     @Test
     void testItemRequestDto() throws IOException {
@@ -52,17 +51,17 @@ public class ShareItJsonTest {
                         .available(true)
                         .user(
                                 User.builder()
-                                .id(2L)
-                                .name("user")
-                                .email("user@email.com")
-                                .build())
+                                        .id(2L)
+                                        .name("user")
+                                        .email("user@email.com")
+                                        .build())
                         .build()))
                 .build();
 
         JsonContent<ItemRequestDto> result = itemRDJson.write(itemRequestDto);
         assertThat(result).extractingJsonPathNumberValue("$.id")
                 .isEqualTo(1);
-       assertThat(result).extractingJsonPathStringValue("$.created")
+        assertThat(result).extractingJsonPathStringValue("$.created")
                 .isEqualTo(now.format(dTF));
         assertThat(result).extractingJsonPathStringValue("$.description")
                 .isEqualTo("description");
@@ -115,10 +114,10 @@ public class ShareItJsonTest {
                 .end(now)
                 .booker(
                         UserDto.builder()
-                        .id(2L)
-                        .name("booker")
-                        .email("b@mail.com")
-                        .build())
+                                .id(2L)
+                                .name("booker")
+                                .email("b@mail.com")
+                                .build())
                 .item(
                         ItemDto.builder()
                                 .id(3L)
@@ -126,17 +125,17 @@ public class ShareItJsonTest {
                                 .name("item")
                                 .available(true)
                                 .comments(List.of(
-                                                CommentDto.builder()
-                                        .id(4L)
-                                        .text("comment")
-                                        .authorName("author")
-                                        .created(ldNow)
-                                        .build()))
+                                        CommentDto.builder()
+                                                .id(4L)
+                                                .text("comment")
+                                                .authorName("author")
+                                                .created(ldNow)
+                                                .build()))
                                 .nextBooking(
                                         BookerDtoInItem.builder()
-                                        .id(1L)
-                                        .bookerId(2L)
-                                        .build())
+                                                .id(1L)
+                                                .bookerId(2L)
+                                                .build())
                                 .build()
                 )
                 .build();
