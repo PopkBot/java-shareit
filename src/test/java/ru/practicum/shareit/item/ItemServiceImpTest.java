@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.item;
+package ru.practicum.shareit.item;
 
 
 import lombok.RequiredArgsConstructor;
@@ -15,10 +15,10 @@ import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentInputDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.mapper.CommentMapper;
+import ru.practicum.shareit.item.dto.ItemInputDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.user.dto.UserInputDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -41,13 +41,12 @@ public class ItemServiceImpTest {
     private final UserService userService;
     private final ItemMapper itemMapper;
     private final BookingService bookingService;
-    private final CommentMapper commentMapper;
 
 
     @Test
     void throwExceptionOnAddingItemWhenUserNotExists() {
 
-        Item item = Item.builder()
+        ItemInputDto item = ItemInputDto.builder()
                 .name("name")
                 .description("description")
                 .available(true)
@@ -61,19 +60,19 @@ public class ItemServiceImpTest {
     @Test
     void addItemTest() {
 
-        User user = User.builder()
+        UserInputDto user = UserInputDto.builder()
                 .name("user")
                 .email("user@user.com")
                 .build();
         Long userId = userService.createUser(user).getId();
 
-        Item item = Item.builder()
+        ItemInputDto item = ItemInputDto.builder()
                 .name("item")
                 .description("description")
                 .available(true)
                 .build();
 
-        ItemDto expectedItemDto = itemMapper.convertToItemDto(item);
+        ItemDto expectedItemDto = itemMapper.convertToItemDto(itemMapper.convertToItem(item));
 
         ItemDto itemDto = itemService.addItem(item, userId);
         expectedItemDto.setId(itemDto.getId());
@@ -84,13 +83,13 @@ public class ItemServiceImpTest {
     @Test
     void throwExceptionOnItemUpdatingWhenUserIsInvalid() {
 
-        Item item = Item.builder()
+        ItemInputDto item = ItemInputDto.builder()
                 .name("item")
                 .description("description")
                 .available(true)
                 .build();
 
-        User user = User.builder()
+        UserInputDto user = UserInputDto.builder()
                 .name("user")
                 .email("user@user.com")
                 .build();
@@ -110,13 +109,13 @@ public class ItemServiceImpTest {
     @Test
     void testUpdateItem() {
 
-        Item item = Item.builder()
+        ItemInputDto item = ItemInputDto.builder()
                 .name("item")
                 .description("description")
                 .available(true)
                 .build();
 
-        User user = User.builder()
+        UserInputDto user = UserInputDto.builder()
                 .name("user")
                 .email("user@user.com")
                 .build();
@@ -124,14 +123,14 @@ public class ItemServiceImpTest {
         Long userId = userService.createUser(user).getId();
         item.setId(itemService.addItem(item, userId).getId());
 
-        Item itemUpdate = Item.builder()
+        ItemInputDto itemUpdate = ItemInputDto.builder()
                 .id(item.getId())
                 .name("updated")
                 .description("updated")
                 .available(false)
                 .build();
 
-        ItemDto expectedItemDto = itemMapper.convertToItemDto(itemUpdate);
+        ItemDto expectedItemDto = itemMapper.convertToItemDto(itemMapper.convertToItem(itemUpdate));
         ItemDto itemDto = itemService.updateItem(itemUpdate, userId);
         assertEquals(expectedItemDto, itemDto);
     }
@@ -143,19 +142,19 @@ public class ItemServiceImpTest {
                 () -> itemService.deleteItem(-1L));
         assertEquals("item not exists", exception.getMessage());
 
-        Item item = Item.builder()
+        ItemInputDto item = ItemInputDto.builder()
                 .name("item")
                 .description("description")
                 .available(true)
                 .build();
 
-        User user = User.builder()
+        UserInputDto user = UserInputDto.builder()
                 .name("user")
                 .email("user@user.com")
                 .build();
         Long userId = userService.createUser(user).getId();
         item.setId(itemService.addItem(item, userId).getId());
-        ItemDto expectedItemDto = itemMapper.convertToItemDto(item);
+        ItemDto expectedItemDto = itemMapper.convertToItemDto(itemMapper.convertToItem(item));
         ItemDto itemDto = itemService.deleteItem(item.getId());
         assertEquals(expectedItemDto, itemDto);
     }
@@ -163,18 +162,18 @@ public class ItemServiceImpTest {
     @Test
     void testExceptionsOnCommentAdding() {
 
-        Item item = Item.builder()
+        ItemInputDto item = ItemInputDto.builder()
                 .name("item")
                 .description("description")
                 .available(true)
                 .build();
 
-        User owner = User.builder()
+        UserInputDto owner = UserInputDto.builder()
                 .name("owner")
                 .email("owner@user.com")
                 .build();
         Long ownerId = userService.createUser(owner).getId();
-        User booker1 = User.builder()
+        UserInputDto booker1 = UserInputDto.builder()
                 .name("booker1")
                 .email("booker1@user.com")
                 .build();
@@ -214,18 +213,18 @@ public class ItemServiceImpTest {
     void testAddComment() {
 
 
-        Item item = Item.builder()
+        ItemInputDto item = ItemInputDto.builder()
                 .name("item")
                 .description("description")
                 .available(true)
                 .build();
 
-        User owner = User.builder()
+        UserInputDto owner = UserInputDto.builder()
                 .name("owner")
                 .email("owner@user.com")
                 .build();
         Long ownerId = userService.createUser(owner).getId();
-        User booker1 = User.builder()
+        UserInputDto booker1 = UserInputDto.builder()
                 .name("booker1")
                 .email("booker1@user.com")
                 .build();
@@ -270,30 +269,30 @@ public class ItemServiceImpTest {
     void getAllItemsWithComments() {
 
 
-        Item item1 = Item.builder()
+        ItemInputDto item1 = ItemInputDto.builder()
                 .name("item1")
                 .description("description")
                 .available(true)
                 .build();
 
-        Item item2 = Item.builder()
+        ItemInputDto item2 = ItemInputDto.builder()
                 .name("item1")
                 .description("description")
                 .available(false)
                 .build();
 
-        User owner = User.builder()
+        UserInputDto owner = UserInputDto.builder()
                 .name("owner")
                 .email("owner@user.com")
                 .build();
         Long ownerId = userService.createUser(owner).getId();
-        User booker1 = User.builder()
+        UserInputDto booker1 = UserInputDto.builder()
                 .name("booker1")
                 .email("booker1@user.com")
                 .build();
         Long booker1Id = userService.createUser(booker1).getId();
 
-        User booker2 = User.builder()
+        UserInputDto booker2 = UserInputDto.builder()
                 .name("booker2")
                 .email("booker2@user.com")
                 .build();
@@ -333,11 +332,11 @@ public class ItemServiceImpTest {
                 .description(item1.getDescription())
                 .comments(new ArrayList<>(List.of(createCommentDto)))
                 .lastBooking(BookerDtoInItem.builder()
-                        .bookerId(booker1.getId())
+                        .bookerId(booker1Id)
                         .id(bookingDto1.getId())
                         .build())
                 .nextBooking(BookerDtoInItem.builder()
-                        .bookerId(booker2.getId())
+                        .bookerId(booker2Id)
                         .id(bookingDto2.getId())
                         .build())
                 .build();
@@ -347,7 +346,7 @@ public class ItemServiceImpTest {
                 .name(item2.getName())
                 .available(item2.getAvailable())
                 .description(item2.getDescription())
-                .comments(null)
+                .comments(new ArrayList<>())
                 .build();
 
         ArrayList<ItemDto> itemDtos = (ArrayList<ItemDto>) itemService.getAllItemsOfUser(ownerId, 0, 10);
@@ -360,24 +359,24 @@ public class ItemServiceImpTest {
     @Test
     void testSearch() {
 
-        User owner = User.builder()
+        UserInputDto owner = UserInputDto.builder()
                 .name("owner")
                 .email("owner@user.com")
                 .build();
         Long ownerId = userService.createUser(owner).getId();
 
-        Item item1 = Item.builder()
+        ItemInputDto item1 = ItemInputDto.builder()
                 .name("name")
                 .description("iteM description")
                 .available(true)
                 .build();
 
-        Item item2 = Item.builder()
+        ItemInputDto item2 = ItemInputDto.builder()
                 .name("ItEm2")
                 .description("description")
                 .available(true)
                 .build();
-        Item item3 = Item.builder()
+        ItemInputDto item3 = ItemInputDto.builder()
                 .name("ItEm3")
                 .description("item")
                 .available(false)

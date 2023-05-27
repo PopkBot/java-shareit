@@ -2,7 +2,6 @@ package ru.practicum.shareit.request.sevice;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
@@ -57,7 +56,7 @@ public class ItemRequestServiceImp implements ItemRequestService {
         userRepository.findById(userId).orElseThrow(
                 () -> new ObjectNotFoundException("user not found")
         );
-        List<ItemRequestDto> itemRequestDtos = itemRequestRepository.getRequestsOfUser(userId).stream()
+        List<ItemRequestDto> itemRequestDtos = itemRequestRepository.getItemRequestByRequestingUserIdOrderByCreated(userId).stream()
                 .map(itemRequestMapper::convertToItemRequestDto).collect(Collectors.toList());
         log.info("list of requests is returned {}", itemRequestDtos);
         return itemRequestDtos;
@@ -72,7 +71,6 @@ public class ItemRequestServiceImp implements ItemRequestService {
         if (userRepository.findById(userId).isEmpty()) {
             userId = -1L;
         }
-        Sort sortByDate = Sort.by(Sort.Direction.ASC, "created");
         List<ItemRequest> itemRequestPage = itemRequestRepository.findAllWithOutRequestingUser(userId, from, size);
         List<ItemRequestDto> itemRequestDtos = itemRequestPage.stream()
                 .map(itemRequestMapper::convertToItemRequestDto)

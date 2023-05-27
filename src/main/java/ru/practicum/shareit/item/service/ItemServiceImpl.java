@@ -13,6 +13,7 @@ import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentInputDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemInputDto;
 import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
@@ -92,8 +93,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemDto addItem(Item item, Long userId) {
+    public ItemDto addItem(ItemInputDto itemInputDto, Long userId) {
 
+        Item item = itemMapper.convertToItem(itemInputDto);
         User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("user not found"));
         item.setUser(user);
         if (item.getRequestId() != null) {
@@ -109,14 +111,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemDto updateItem(Item item, Long userId) {
-        Item itemToUpdate = itemRepository.findById(item.getId()).orElseThrow(
+    public ItemDto updateItem(ItemInputDto itemInputDto, Long userId) {
+        Item itemToUpdate = itemRepository.findById(itemInputDto.getId()).orElseThrow(
                 () -> new ObjectNotFoundException("item not exists")
         );
-        itemRepository.findByIdAndUserId(item.getId(), userId).orElseThrow(
+        itemRepository.findByIdAndUserId(itemInputDto.getId(), userId).orElseThrow(
                 () -> new ObjectNotFoundException("user doesn`t pertain this item")
         );
-        updateItemParams(itemToUpdate, item);
+        updateItemParams(itemToUpdate, itemMapper.convertToItem(itemInputDto));
         itemToUpdate = itemRepository.save(itemToUpdate);
         log.info("item {} is updated", itemToUpdate);
         return itemMapper.convertToItemDto(itemToUpdate);

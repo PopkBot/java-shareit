@@ -86,10 +86,13 @@ public class BookingServiceImp implements BookingService {
                 booking.getStatus().equals(Status.REJECTED) && !isApproved) {
             throw new ValidationException("Cannot set same status");
         }
-        /*Long overlaps = bookingRepository.countDateOverlaps(
+
+        /*
+        Long itemId = booking.getItem().getId();
+        Long overlaps = bookingRepository.countDateOverlaps(
                 Timestamp.from(booking.getStart()).toString()+"Z",
                 Timestamp.from(booking.getEnd()).toString()+"Z",
-                ownerId);
+                itemId);
         if (overlaps > 0) {
             throw new ValidationException("Cannot approve overlap bookings");
         }*/

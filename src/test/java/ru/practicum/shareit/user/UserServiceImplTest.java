@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.service;
+package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -8,7 +8,8 @@ import ru.practicum.shareit.exceptions.ObjectAlreadyExists;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserInputDto;
+import ru.practicum.shareit.user.service.UserService;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -28,26 +29,26 @@ class UserServiceImplTest {
 
     @Test
     void createUserValidationException() {
-        User userBlankName = User.builder()
+        UserInputDto userBlankName = UserInputDto.builder()
                 .name(" ")
                 .email("user@user.com")
                 .build();
         ValidationException exception = assertThrows(ValidationException.class, () -> userService.createUser(userBlankName));
         assertEquals("name cannot be blank", exception.getMessage());
 
-        User userNullName = User.builder()
+        UserInputDto userNullName = UserInputDto.builder()
                 .email("user@user.com")
                 .build();
         exception = assertThrows(ValidationException.class, () -> userService.createUser(userNullName));
         assertEquals("name cannot be blank", exception.getMessage());
 
-        User userNullEmail = User.builder()
+        UserInputDto userNullEmail = UserInputDto.builder()
                 .name("Ams")
                 .build();
         exception = assertThrows(ValidationException.class, () -> userService.createUser(userNullEmail));
         assertEquals("email cannot be blank", exception.getMessage());
 
-        User userWrongEmailFormat = User.builder()
+        UserInputDto userWrongEmailFormat = UserInputDto.builder()
                 .name("Ams")
                 .email("incorrectEmail.m")
                 .build();
@@ -57,7 +58,7 @@ class UserServiceImplTest {
 
     @Test
     void createUserSuccess() {
-        User user = User.builder()
+        UserInputDto user = UserInputDto.builder()
                 .name("Amd")
                 .email("user@user.com")
                 .build();
@@ -77,12 +78,12 @@ class UserServiceImplTest {
 
     @Test
     void throwExceptionOnCreateOfSameUser() {
-        User user1 = User.builder()
+        UserInputDto user1 = UserInputDto.builder()
                 .name("Amd")
                 .email("user@user.com")
                 .build();
 
-        User user2 = User.builder()
+        UserInputDto user2 = UserInputDto.builder()
                 .name("Amd")
                 .email("user@user.com")
                 .build();
@@ -98,19 +99,19 @@ class UserServiceImplTest {
     void updateUserValidationException() {
 
 
-        User user1 = User.builder()
+        UserInputDto user1 = UserInputDto.builder()
                 .name("Amd")
                 .email("user@user.com")
                 .build();
         Long userId = userService.createUser(user1).getId();
-        User user2 = User.builder()
+        UserInputDto user2 = UserInputDto.builder()
                 .name("Amd")
                 .email("incorrectEmailFormat")
                 .build();
         ValidationException exception = assertThrows(ValidationException.class, () -> userService.updateUser(user2, userId));
         assertEquals("wrong email format", exception.getMessage());
 
-        User user3 = User.builder()
+        UserInputDto user3 = UserInputDto.builder()
                 .name("Amd")
                 .email("")
                 .build();
@@ -122,7 +123,7 @@ class UserServiceImplTest {
     @Test
     void updateNonExistingUser() {
 
-        User user = User.builder()
+        UserInputDto user = UserInputDto.builder()
                 .name("Amd")
                 .email("user@user.com")
                 .build();
@@ -133,19 +134,19 @@ class UserServiceImplTest {
     @Test
     void updateOnAlreadyExistingUser() {
 
-        User user1 = User.builder()
+        UserInputDto user1 = UserInputDto.builder()
                 .name("Amd")
                 .email("user@user.com")
                 .build();
         userService.createUser(user1);
 
-        User user2 = User.builder()
+        UserInputDto user2 = UserInputDto.builder()
                 .name("Amd2")
                 .email("user2@user.com")
                 .build();
         Long userId = userService.createUser(user2).getId();
 
-        User user2Up = User.builder()
+        UserInputDto user2Up = UserInputDto.builder()
                 .name("Amd2U")
                 .email("user@user.com")
                 .build();
@@ -157,12 +158,12 @@ class UserServiceImplTest {
     void updateUserSuccessful() {
 
 
-        User user1 = User.builder()
+        UserInputDto user1 = UserInputDto.builder()
                 .name("Amd")
                 .email("user@user.com")
                 .build();
         Long userId = userService.createUser(user1).getId();
-        User user1UpName = User.builder()
+        UserInputDto user1UpName = UserInputDto.builder()
                 .name("AmdUp")
                 .build();
         userService.updateUser(user1UpName, userId);
@@ -174,7 +175,7 @@ class UserServiceImplTest {
                 .build();
         assertEquals(updatedUserDto, userService.getUserById(userId));
 
-        User user1UpEmail = User.builder()
+        UserInputDto user1UpEmail = UserInputDto.builder()
                 .email("userUp@user.com")
                 .build();
         userService.updateUser(user1UpEmail, userId);
@@ -197,7 +198,7 @@ class UserServiceImplTest {
     @Test
     void deleteExistingUserSuccessful() {
 
-        User user1 = User.builder()
+        UserInputDto user1 = UserInputDto.builder()
                 .name("Amd")
                 .email("user@user.com")
                 .build();
@@ -216,7 +217,7 @@ class UserServiceImplTest {
 
         ArrayList<UserDto> userDtos = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
-            User user = User.builder()
+            UserInputDto user = UserInputDto.builder()
                     .name("Amd" + i)
                     .email("user" + i + "@user.com")
                     .build();

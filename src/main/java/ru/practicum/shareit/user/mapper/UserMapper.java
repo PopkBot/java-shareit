@@ -8,6 +8,7 @@ import org.modelmapper.convention.NamingConventions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserInputDto;
 import ru.practicum.shareit.user.model.User;
 
 @Component
@@ -34,5 +35,7 @@ public class UserMapper {
     public User convertToUser(UserDto userDto) {
         return modelMapper.map(userDto, User.class);
     }
+
+    public User convertToUser(UserInputDto userInputDto){return modelMapper.map(userInputDto, User.class);}
 
 }

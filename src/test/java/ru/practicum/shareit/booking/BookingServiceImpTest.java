@@ -11,8 +11,10 @@ import ru.practicum.shareit.booking.dto.BookingRequestParamsDto;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.item.dto.ItemInputDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.user.dto.UserInputDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -49,7 +51,7 @@ public class BookingServiceImpTest {
                 () -> bookingService.addBooking(bookingInputDto, -1L));
         assertEquals("Booker not found", oe.getMessage());
 
-        User user = User.builder()
+        UserInputDto user = UserInputDto.builder()
                 .name("Amd")
                 .email("user@user.com")
                 .build();
@@ -59,7 +61,7 @@ public class BookingServiceImpTest {
                 () -> bookingService.addBooking(bookingInputDto, user.getId()));
         assertEquals("Item not found", oe.getMessage());
 
-        Item item = Item.builder()
+        ItemInputDto item = ItemInputDto.builder()
                 .name("item")
                 .description("description")
                 .available(false)
@@ -72,7 +74,7 @@ public class BookingServiceImpTest {
                 () -> bookingService.addBooking(bookingInputDto, user.getId()));
         assertEquals("Owner cannot book own item", oe.getMessage());
 
-        User booker = User.builder()
+        UserInputDto booker = UserInputDto.builder()
                 .name("booker")
                 .email("booker@mail.com")
                 .build();
@@ -103,17 +105,17 @@ public class BookingServiceImpTest {
                 () -> bookingService.setApprovedStatus(-1L, -1L, true));
         assertEquals("Booking not found", oe.getMessage());
 
-        User booker = User.builder()
+        UserInputDto booker = UserInputDto.builder()
                 .name("booker")
                 .email("booker@mail.com")
                 .build();
         booker.setId(userService.createUser(booker).getId());
-        User owner = User.builder()
+        UserInputDto owner = UserInputDto.builder()
                 .name("owner")
                 .email("user@mail.com")
                 .build();
         owner.setId(userService.createUser(owner).getId());
-        Item item = Item.builder()
+        ItemInputDto item = ItemInputDto.builder()
                 .name("item")
                 .description("desc")
                 .available(true)
@@ -156,17 +158,17 @@ public class BookingServiceImpTest {
     @Test
     void testGetBookingsOfUser() {
 
-        User booker = User.builder()
+        UserInputDto booker = UserInputDto.builder()
                 .name("booker")
                 .email("booker@mail.com")
                 .build();
         booker.setId(userService.createUser(booker).getId());
-        User owner = User.builder()
+        UserInputDto owner = UserInputDto.builder()
                 .name("owner")
                 .email("user@mail.com")
                 .build();
         owner.setId(userService.createUser(owner).getId());
-        Item item = Item.builder()
+        ItemInputDto item = ItemInputDto.builder()
                 .name("item")
                 .description("desc")
                 .available(true)
@@ -284,28 +286,27 @@ public class BookingServiceImpTest {
         List<BookingDto> futureBookings = bookingService.getBookingsOfUser(bookingRPDFuture);
         assertEquals(bookingDto3.getId(), futureBookings.get(0).getId());
 
-
     }
 
     @Test
     void testGetBookingById() {
 
-        User booker = User.builder()
+        UserInputDto booker = UserInputDto.builder()
                 .name("booker")
                 .email("booker@mail.com")
                 .build();
         booker.setId(userService.createUser(booker).getId());
-        User owner = User.builder()
+        UserInputDto owner = UserInputDto.builder()
                 .name("owner")
                 .email("owner@mail.com")
                 .build();
         owner.setId(userService.createUser(owner).getId());
-        User user = User.builder()
+        UserInputDto user = UserInputDto.builder()
                 .name("user")
                 .email("user@mail.com")
                 .build();
         user.setId(userService.createUser(user).getId());
-        Item item = Item.builder()
+        ItemInputDto item = ItemInputDto.builder()
                 .name("item")
                 .description("desc")
                 .available(true)

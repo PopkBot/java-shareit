@@ -9,6 +9,7 @@ import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestInputDto;
 import ru.practicum.shareit.request.sevice.ItemRequestService;
+import ru.practicum.shareit.user.dto.UserInputDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -40,7 +41,7 @@ public class ItemRequestServiceImpTest {
                 () -> itemRequestService.addRequest(inputDto, -1L));
         assertEquals("User not found", oe.getMessage());
 
-        User user = User.builder()
+        UserInputDto user = UserInputDto.builder()
                 .name("name")
                 .email("email@mail.com")
                 .build();
@@ -63,7 +64,7 @@ public class ItemRequestServiceImpTest {
                 .description("description")
                 .build();
 
-        User user = User.builder()
+        UserInputDto user = UserInputDto.builder()
                 .name("name")
                 .email("email@mail.com")
                 .build();
@@ -90,12 +91,12 @@ public class ItemRequestServiceImpTest {
         ItemRequestInputDto inputDto3 = ItemRequestInputDto.builder()
                 .description("description3")
                 .build();
-        User user1 = User.builder()
+        UserInputDto user1 = UserInputDto.builder()
                 .name("name1")
                 .email("email1@mail.com")
                 .build();
         user1.setId(userService.createUser(user1).getId());
-        User user2 = User.builder()
+        UserInputDto user2 = UserInputDto.builder()
                 .name("name2")
                 .email("email2@mail.com")
                 .build();
@@ -120,7 +121,7 @@ public class ItemRequestServiceImpTest {
         ObjectNotFoundException oe = assertThrows(ObjectNotFoundException.class,
                 () -> itemRequestService.getItemRequestById(-1L, -1L));
         assertEquals("user not found", oe.getMessage());
-        User user = User.builder()
+        UserInputDto user = UserInputDto.builder()
                 .name("name")
                 .email("email@mail.com")
                 .build();

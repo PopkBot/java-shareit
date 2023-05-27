@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentInputDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemInputDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.validation.CommentCreate;
@@ -31,19 +32,19 @@ public class ItemController {
     }
 
     @PostMapping("/items")
-    public ItemDto addItem(@ItemCreate @RequestBody Item item,
+    public ItemDto addItem(@ItemCreate @RequestBody ItemInputDto itemInputDto,
                            @RequestHeader("X-Sharer-User-Id") Long userId) {
-        log.info("adding new item {} requested", item);
-        return itemService.addItem(item, userId);
+        log.info("adding new item {} requested", itemInputDto);
+        return itemService.addItem(itemInputDto, userId);
     }
 
     @PatchMapping("/items/{itemId}")
     public ItemDto updateItem(@PathVariable Long itemId,
-                              @ItemUpdate @RequestBody Item item,
+                              @ItemUpdate @RequestBody ItemInputDto itemInputDto,
                               @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("updating item requested");
-        item.setId(itemId);
-        return itemService.updateItem(item, userId);
+        itemInputDto.setId(itemId);
+        return itemService.updateItem(itemInputDto, userId);
     }
 
     @GetMapping("/items/search")
