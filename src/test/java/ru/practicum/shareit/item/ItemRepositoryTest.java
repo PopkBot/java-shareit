@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.practicum.shareit.CustomPageRequest;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.projection.ItemIdProjection;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -73,7 +76,9 @@ public class ItemRepositoryTest {
         int from = 1;
         int size = 2;
 
-        List<Item> items = itemRepository.findAllByUserId(user.getId(), from, size);
+        Pageable page = new CustomPageRequest(from,size);
+        Page<Item> itemsPage = itemRepository.findAllByUserId(user.getId(),page);
+        List<Item> items = itemsPage.getContent();
 
         Assertions.assertNotNull(items);
         assertEquals(2, items.size());
