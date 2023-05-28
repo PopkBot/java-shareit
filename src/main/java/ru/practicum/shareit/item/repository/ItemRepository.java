@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    @Query(value = "select * from items as it where it.user_id = ?1", nativeQuery = true)
+    @Query(value = "select * from items where user_id = ?1", nativeQuery = true)
     Page<Item> findAllByUserId(Long userId, Pageable pageable);
 
     Optional<ItemIdProjection> findByIdAndUserId(Long itemId, Long userId);

@@ -77,7 +77,7 @@ public class ItemRepositoryTest {
         int size = 2;
 
         Pageable page = new CustomPageRequest(from,size);
-        Page<Item> itemsPage = itemRepository.findAllByUserId(user.getId(),page);
+        Page<Item> itemsPage = itemRepository.findAllByUserId(user.getId(), page);
         List<Item> items = itemsPage.getContent();
 
         Assertions.assertNotNull(items);
