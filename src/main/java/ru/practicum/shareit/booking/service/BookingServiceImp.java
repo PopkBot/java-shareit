@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingInputDto;
+import ru.practicum.shareit.booking.dto.BookingRequestParamsDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -19,6 +20,8 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,16 +86,22 @@ public class BookingServiceImp implements BookingService {
                 booking.getStatus().equals(Status.REJECTED) && !isApproved) {
             throw new ValidationException("Cannot set same status");
         }
-        /*Long overlaps = bookingRepository.countDateOverlaps(
+
+        /*
+        Long itemId = booking.getItem().getId();
+        Long overlaps = bookingRepository.countDateOverlaps(
                 Timestamp.from(booking.getStart()).toString()+"Z",
                 Timestamp.from(booking.getEnd()).toString()+"Z",
-                ownerId);
+                itemId);
         if (overlaps > 0) {
             throw new ValidationException("Cannot approve overlap bookings");
         }*/
+        LocalDateTime end = LocalDateTime.ofInstant(booking.getEnd(), ZoneId.of("UTC"));
+        LocalDateTime now = LocalDateTime.now();
         if (isApproved) {
             booking.setStatus(Status.APPROVED);
-        } else if (booking.getEnd().isBefore(Instant.now()) && booking.getStatus().equals(Status.APPROVED)) {
+        } else if (end.isBefore(now)
+                && booking.getStatus().equals(Status.APPROVED)) {
             throw new ValidationException("Cannot change completed booking");
         } else {
             booking.setStatus(Status.REJECTED);
@@ -102,41 +111,53 @@ public class BookingServiceImp implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsOfUser(Long userId, String statusString, String userType) {
+    public List<BookingDto> getBookingsOfUser(BookingRequestParamsDto paramsDto) {
 
-        userRepository.findById(userId).orElseThrow(
+        userRepository.findById(paramsDto.getOwnerId()).orElseThrow(
                 () -> new ObjectNotFoundException("User not found")
         );
-        if (Arrays.stream(Status.values()).noneMatch(status -> status.toString().equals(statusString))) {
-            throw new ValidationException("Unknown state: " + statusString);
+        paramsDto.setStatusString(paramsDto.getStatusString().toUpperCase());
+        if (Arrays.stream(Status.values()).noneMatch(status -> status.toString().equals(paramsDto.getStatusString()))) {
+            throw new ValidationException("Unknown state: " + paramsDto.getStatusString());
         }
-        Status status = Status.valueOf(statusString);
+        if (paramsDto.getSize() <= 0 || paramsDto.getFrom() < 0) {
+            throw new ValidationException("invalid page parameters");
+        }
+
+        Status status = Status.valueOf(paramsDto.getStatusString());
         List<Booking> bookings;
         String nowStr = Timestamp.from(Instant.now()) + "Z";
         switch (status) {
             case ALL:
-                bookings = bookingRepository.getAllBookingsOfOwner(userId, userType);
+                bookings = bookingRepository.getAllBookingsOfOwner(paramsDto.getOwnerId(), paramsDto.getUserType(),
+                        paramsDto.getFrom(), paramsDto.getSize());
                 break;
             case APPROVED:
                 bookings = bookingRepository
-                        .getBookingsOfOwnerByApproval(userId, Status.APPROVED.toString(), userType);
+                        .getBookingsOfOwnerByApproval(paramsDto.getOwnerId(), Status.APPROVED.toString(),
+                                paramsDto.getUserType(), paramsDto.getFrom(), paramsDto.getSize());
                 break;
             case REJECTED:
                 bookings = bookingRepository
-                        .getBookingsOfOwnerByApproval(userId, Status.REJECTED.toString(), userType);
+                        .getBookingsOfOwnerByApproval(paramsDto.getOwnerId(), Status.REJECTED.toString(),
+                                paramsDto.getUserType(), paramsDto.getFrom(), paramsDto.getSize());
                 break;
             case WAITING:
                 bookings = bookingRepository
-                        .getBookingsOfOwnerByApproval(userId, Status.WAITING.toString(), userType);
+                        .getBookingsOfOwnerByApproval(paramsDto.getOwnerId(), Status.WAITING.toString(),
+                                paramsDto.getUserType(), paramsDto.getFrom(), paramsDto.getSize());
                 break;
             case FUTURE:
-                bookings = bookingRepository.getFutureBookingsOfOwner(userId, nowStr, userType);
+                bookings = bookingRepository.getFutureBookingsOfOwner(paramsDto.getOwnerId(), nowStr,
+                        paramsDto.getUserType(), paramsDto.getFrom(), paramsDto.getSize());
                 break;
             case CURRENT:
-                bookings = bookingRepository.getCurrentBookingsOfOwner(userId, nowStr, userType);
+                bookings = bookingRepository.getCurrentBookingsOfOwner(paramsDto.getOwnerId(), nowStr,
+                        paramsDto.getUserType(), paramsDto.getFrom(), paramsDto.getSize());
                 break;
             case PAST:
-                bookings = bookingRepository.getPastBookingsOfOwner(userId, nowStr, userType);
+                bookings = bookingRepository.getPastBookingsOfOwner(paramsDto.getOwnerId(), nowStr,
+                        paramsDto.getUserType(), paramsDto.getFrom(), paramsDto.getSize());
                 break;
             default:
                 throw new ObjectNotFoundException("Unsupported status");

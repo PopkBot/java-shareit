@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BookingCreate {
 
-    String message() default "{Booking is invalid to adding}";
+    String message() default "{Booking is invalid for adding}";
 
     Class<?>[] groups() default {};
 
