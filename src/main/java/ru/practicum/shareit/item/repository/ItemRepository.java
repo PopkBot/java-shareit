@@ -1,5 +1,7 @@
 package ru.practicum.shareit.item.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.item.model.Item;
@@ -10,8 +12,8 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    @Query(value = "select * from items as it where it.user_id = ?1 limit ?3 offset ?2", nativeQuery = true)
-    List<Item> findAllByUserId(Long userId, Integer from, Integer size);
+    @Query(value = "select * from items as it where it.user_id = ?1", nativeQuery = true)
+    Page<Item> findAllByUserId(Long userId, Pageable pageable);
 
     Optional<ItemIdProjection> findByIdAndUserId(Long itemId, Long userId);
 

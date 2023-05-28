@@ -2,7 +2,12 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.CustomPageRequest;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookerDtoInItem;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -48,6 +53,15 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final ItemRequestRepository itemRequestRepository;
 
+    /*
+    Реализовал пагинацию через интерфейс Pageable только здесь, на случай если этот вариант не оптимальный.
+    Если я правильно понимаю, AbstractPageRequest имплементирующий Pageable автоматически добавляет в
+    SQL запрос OFFSET и LIMIT, причем AbstractPageRequest получает значение OFFSET простым перемножением page№ * size.
+    Задание предлагает использовать PageRequest и переработать входные from и size, чтобы произведение
+    page№ * size равнялось from. Есть ли преимущества Pageable в данном случае, которые оправдывают
+    такие лишние преобразования?
+     */
+
     @Override
     public List<ItemDto> getAllItemsOfUser(Long userId, Integer from, Integer size) {
         String nowStr = Timestamp.from(Instant.now()) + "Z";
@@ -55,8 +69,9 @@ public class ItemServiceImpl implements ItemService {
         if (size <= 0 || from < 0) {
             throw new ValidationException("invalid page parameters");
         }
-        List<Item> itemPage = itemRepository.findAllByUserId(userId, from, size);
-        List<ItemDto> itemDtos = itemPage.stream()
+        Pageable page = new CustomPageRequest(from,size);
+        Page<Item> itemPage = itemRepository.findAllByUserId(userId,page);
+        List<ItemDto> itemDtos = itemPage.getContent().stream()
                 .map(item -> {
                             BookerDtoInItem bookingDtoNext = bookingMapper.convertToBookingDtoInItem(
                                     bookingRepository.getNextBooking(nowStr, item.getId()));
