@@ -7,11 +7,13 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 public class ItemRequestRepositoryTest {
@@ -23,7 +25,7 @@ public class ItemRequestRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    void testGetItemRequestByIdOrderByCreated(){
+    void testGetItemRequestByIdOrderByCreated() {
 
         User user = User.builder()
                 .name("user")
@@ -61,15 +63,15 @@ public class ItemRequestRepositoryTest {
 
         List<ItemRequest> itemRequests = itemRequestRepository.getItemRequestByRequestingUserIdOrderByCreated(user.getId());
         assertNotNull(itemRequests);
-        assertEquals(3,itemRequests.size());
-        assertEquals(itemRequest1,itemRequests.get(0));
-        assertEquals(itemRequest3,itemRequests.get(1));
-        assertEquals(itemRequest2,itemRequests.get(2));
+        assertEquals(3, itemRequests.size());
+        assertEquals(itemRequest1, itemRequests.get(0));
+        assertEquals(itemRequest3, itemRequests.get(1));
+        assertEquals(itemRequest2, itemRequests.get(2));
 
     }
 
     @Test
-    void testFindAllWithOutRequestingUser(){
+    void testFindAllWithOutRequestingUser() {
 
         User user1 = User.builder()
                 .name("user1")
@@ -120,11 +122,11 @@ public class ItemRequestRepositoryTest {
         assertNotNull(itemRequest3.getId());
         assertNotNull(itemRequest4.getId());
 
-        List<ItemRequest> itemRequests = itemRequestRepository.findAllWithOutRequestingUser(user1.getId(),0,10);
+        List<ItemRequest> itemRequests = itemRequestRepository.findAllWithOutRequestingUser(user1.getId(), 0, 10);
         assertNotNull(itemRequests);
-        assertEquals(2,itemRequests.size());
-        assertEquals(itemRequest3,itemRequests.get(0));
-        assertEquals(itemRequest4,itemRequests.get(1));
+        assertEquals(2, itemRequests.size());
+        assertEquals(itemRequest3, itemRequests.get(0));
+        assertEquals(itemRequest4, itemRequests.get(1));
 
     }
 

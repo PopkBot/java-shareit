@@ -21,7 +21,7 @@ public class UserRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    void testSaveUser(){
+    void testSaveUser() {
         User user = User.builder()
                 .name("user")
                 .email("email@email.com")
@@ -32,7 +32,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void testFindUserByEmail(){
+    void testFindUserByEmail() {
 
         User user1 = User.builder()
                 .name("user1")
@@ -54,17 +54,17 @@ public class UserRepositoryTest {
         Assertions.assertNotNull(user2.getId());
         Assertions.assertNotNull(user3.getId());
 
-        UserIdProjection foundUserId = userRepository.findByEmailIgnoreCaseAndIdNot("email1@email.com",user3.getId());
-        assertEquals(user1.getId(),foundUserId.getId());
-        foundUserId = userRepository.findByEmailIgnoreCaseAndIdNot("email2@email.com",user3.getId());
-        assertEquals(user2.getId(),foundUserId.getId());
-        foundUserId = userRepository.findByEmailIgnoreCaseAndIdNot("email3@email.com",user3.getId());
+        UserIdProjection foundUserId = userRepository.findByEmailIgnoreCaseAndIdNot("email1@email.com", user3.getId());
+        assertEquals(user1.getId(), foundUserId.getId());
+        foundUserId = userRepository.findByEmailIgnoreCaseAndIdNot("email2@email.com", user3.getId());
+        assertEquals(user2.getId(), foundUserId.getId());
+        foundUserId = userRepository.findByEmailIgnoreCaseAndIdNot("email3@email.com", user3.getId());
         Assertions.assertNull(foundUserId);
 
     }
 
     @Test
-    void testFindById(){
+    void testFindById() {
 
         User user1 = User.builder()
                 .name("user1")
@@ -74,7 +74,7 @@ public class UserRepositoryTest {
         Assertions.assertNotNull(user1.getId());
         Optional<User> foundUser = userRepository.findById(user1.getId());
         assertTrue(foundUser.isPresent());
-        assertEquals(user1,foundUser.get());
+        assertEquals(user1, foundUser.get());
 
         Optional<User> notFoundUser = userRepository.findById(-1L);
         assertTrue(notFoundUser.isEmpty());
@@ -82,7 +82,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void testFindAll(){
+    void testFindAll() {
 
         User user1 = User.builder()
                 .name("user1")
@@ -106,13 +106,12 @@ public class UserRepositoryTest {
 
         List<User> users = userRepository.findAll();
         assertNotNull(users);
-        assertEquals(3,users.size());
-        assertEquals(user1,users.get(0));
-        assertEquals(user2,users.get(1));
-        assertEquals(user3,users.get(2));
+        assertEquals(3, users.size());
+        assertEquals(user1, users.get(0));
+        assertEquals(user2, users.get(1));
+        assertEquals(user3, users.get(2));
 
     }
-
 
 
 }

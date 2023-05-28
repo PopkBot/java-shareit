@@ -19,7 +19,6 @@ import ru.practicum.shareit.item.dto.ItemInputDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.dto.UserInputDto;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.transaction.Transactional;

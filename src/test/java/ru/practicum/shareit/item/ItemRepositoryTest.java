@@ -10,9 +10,11 @@ import ru.practicum.shareit.item.projection.ItemIdProjection;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.List;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 public class ItemRepositoryTest {
@@ -24,7 +26,7 @@ public class ItemRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    void testFindByUserIdWithPagination(){
+    void testFindByUserIdWithPagination() {
 
         User user = User.builder()
                 .name("user")
@@ -71,17 +73,17 @@ public class ItemRepositoryTest {
         int from = 1;
         int size = 2;
 
-        List<Item> items = itemRepository.findAllByUserId(user.getId(),from,size);
+        List<Item> items = itemRepository.findAllByUserId(user.getId(), from, size);
 
         Assertions.assertNotNull(items);
-        assertEquals(2,items.size());
-        assertEquals(item2,items.get(0));
-        assertEquals(item3,items.get(1));
+        assertEquals(2, items.size());
+        assertEquals(item2, items.get(0));
+        assertEquals(item3, items.get(1));
 
     }
 
     @Test
-    void testSearchByText(){
+    void testSearchByText() {
 
         User user = User.builder()
                 .name("user")
@@ -123,17 +125,17 @@ public class ItemRepositoryTest {
         Assertions.assertNotNull(item2.getId());
         Assertions.assertNotNull(item3.getId());
 
-        List<Item> items = itemRepository.searchByQueryText(text,from,size);
+        List<Item> items = itemRepository.searchByQueryText(text, from, size);
 
         assertNotNull(items);
-        assertEquals(2,items.size());
-        assertEquals(item1,items.get(0));
-        assertEquals(item2,items.get(1));
+        assertEquals(2, items.size());
+        assertEquals(item1, items.get(0));
+        assertEquals(item2, items.get(1));
 
     }
 
     @Test
-    void testFindByItemIdAndUserId(){
+    void testFindByItemIdAndUserId() {
 
         User user = User.builder()
                 .name("user")
@@ -154,12 +156,11 @@ public class ItemRepositoryTest {
         Assertions.assertNotNull(user.getId());
         Assertions.assertNotNull(item1.getId());
 
-        Optional<ItemIdProjection> itemIdProjection = itemRepository.findByIdAndUserId(item1.getId(),user.getId());
-        assertEquals(item1.getId(),itemIdProjection.get().getId());
+        Optional<ItemIdProjection> itemIdProjection = itemRepository.findByIdAndUserId(item1.getId(), user.getId());
+        assertEquals(item1.getId(), itemIdProjection.get().getId());
 
-        itemIdProjection = itemRepository.findByIdAndUserId(item1.getId(),-1L);
+        itemIdProjection = itemRepository.findByIdAndUserId(item1.getId(), -1L);
         assertTrue(itemIdProjection.isEmpty());
-
 
 
     }

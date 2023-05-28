@@ -10,7 +10,6 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestInputDto;
 import ru.practicum.shareit.request.sevice.ItemRequestService;
 import ru.practicum.shareit.user.dto.UserInputDto;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.transaction.Transactional;

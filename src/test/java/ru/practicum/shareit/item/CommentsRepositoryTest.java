@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -12,6 +11,8 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 public class CommentsRepositoryTest {
@@ -26,7 +27,7 @@ public class CommentsRepositoryTest {
     private ItemRepository itemRepository;
 
     @Test
-    void testCommentSave(){
+    void testCommentSave() {
 
         User user = User.builder()
                 .name("name")
@@ -56,7 +57,7 @@ public class CommentsRepositoryTest {
         Optional<Comment> foundComment = commentRepository.findById(comment.getId());
 
         assertTrue(foundComment.isPresent());
-        assertEquals(comment,foundComment.get());
+        assertEquals(comment, foundComment.get());
 
     }
 

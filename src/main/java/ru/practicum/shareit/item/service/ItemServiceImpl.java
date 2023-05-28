@@ -3,9 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.CustomPageRequest;
 import ru.practicum.shareit.booking.Status;
@@ -69,8 +67,8 @@ public class ItemServiceImpl implements ItemService {
         if (size <= 0 || from < 0) {
             throw new ValidationException("invalid page parameters");
         }
-        Pageable page = new CustomPageRequest(from,size);
-        Page<Item> itemPage = itemRepository.findAllByUserId(userId,page);
+        Pageable page = new CustomPageRequest(from, size);
+        Page<Item> itemPage = itemRepository.findAllByUserId(userId, page);
         List<ItemDto> itemDtos = itemPage.getContent().stream()
                 .map(item -> {
                             BookerDtoInItem bookingDtoNext = bookingMapper.convertToBookingDtoInItem(

@@ -9,10 +9,12 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.Instant;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 public class BookingRepositoryTest {
@@ -28,7 +30,7 @@ public class BookingRepositoryTest {
 
 
     @Test
-    void testGetAllBookingsOfOwner(){
+    void testGetAllBookingsOfOwner() {
 
         User booker = User.builder()
                 .name("booker")
@@ -74,16 +76,16 @@ public class BookingRepositoryTest {
         assertNotNull(booking1.getId());
         assertNotNull(booking2.getId());
 
-        List<Booking> foundBookings = bookingRepository.getAllBookingsOfOwner(owner.getId(),"owner",0,10);
-        assertEquals(2,foundBookings.size());
-        assertEquals(booking1,foundBookings.get(0));
-        assertEquals(booking2,foundBookings.get(1));
+        List<Booking> foundBookings = bookingRepository.getAllBookingsOfOwner(owner.getId(), "owner", 0, 10);
+        assertEquals(2, foundBookings.size());
+        assertEquals(booking1, foundBookings.get(0));
+        assertEquals(booking2, foundBookings.get(1));
 
 
     }
 
     @Test
-    void testCountOverlaps(){
+    void testCountOverlaps() {
 
         User booker = User.builder()
                 .name("booker")
@@ -143,14 +145,14 @@ public class BookingRepositoryTest {
         assertNotNull(booking2.getId());
         assertNotNull(booking3.getId());
 
-        Long count = bookingRepository.countDateOverlaps(start,end,item.getId());
+        Long count = bookingRepository.countDateOverlaps(start, end, item.getId());
         assertNotNull(count);
-        assertEquals(1L,count);
+        assertEquals(1L, count);
 
     }
 
     @Test
-    void testGetBookingsByStatus(){
+    void testGetBookingsByStatus() {
 
         User booker = User.builder()
                 .name("booker")
@@ -208,30 +210,28 @@ public class BookingRepositoryTest {
         assertNotNull(booking3.getId());
 
 
-
-
         List<Booking> approvedBookings = bookingRepository.getBookingsOfOwnerByApproval(owner.getId(),
-                "APPROVED","owner",0,10);
+                "APPROVED", "owner", 0, 10);
         List<Booking> waitingBookings = bookingRepository.getBookingsOfOwnerByApproval(owner.getId(),
-                "WAITING","owner",0,10);
+                "WAITING", "owner", 0, 10);
         List<Booking> rejectedBookings = bookingRepository.getBookingsOfOwnerByApproval(owner.getId(),
-                "REJECTED","owner",0,10);
+                "REJECTED", "owner", 0, 10);
         assertNotNull(approvedBookings);
         assertNotNull(waitingBookings);
         assertNotNull(rejectedBookings);
 
-        assertEquals(1,approvedBookings.size());
-        assertEquals(1,waitingBookings.size());
-        assertEquals(1,rejectedBookings.size());
+        assertEquals(1, approvedBookings.size());
+        assertEquals(1, waitingBookings.size());
+        assertEquals(1, rejectedBookings.size());
 
-        assertEquals(booking2,approvedBookings.get(0));
-        assertEquals(booking1,waitingBookings.get(0));
-        assertEquals(booking3,rejectedBookings.get(0));
+        assertEquals(booking2, approvedBookings.get(0));
+        assertEquals(booking1, waitingBookings.get(0));
+        assertEquals(booking3, rejectedBookings.get(0));
 
     }
 
     @Test
-    void testGetBookingsByTime(){
+    void testGetBookingsByTime() {
 
         User booker = User.builder()
                 .name("booker")
@@ -289,30 +289,28 @@ public class BookingRepositoryTest {
         assertNotNull(booking3.getId());
 
 
-
-
         List<Booking> pastBookings = bookingRepository.getPastBookingsOfOwner(owner.getId(),
-                now.toString(),"owner",0,10);
+                now.toString(), "owner", 0, 10);
         List<Booking> currentBookings = bookingRepository.getCurrentBookingsOfOwner(booker.getId(),
-                now.toString(),"booker",0,10);
+                now.toString(), "booker", 0, 10);
         List<Booking> futureBookings = bookingRepository.getFutureBookingsOfOwner(owner.getId(),
-                now.toString(),"owner",0,10);
+                now.toString(), "owner", 0, 10);
         assertNotNull(pastBookings);
         assertNotNull(currentBookings);
         assertNotNull(futureBookings);
 
-        assertEquals(1,pastBookings.size());
-        assertEquals(1,currentBookings.size());
-        assertEquals(1,futureBookings.size());
+        assertEquals(1, pastBookings.size());
+        assertEquals(1, currentBookings.size());
+        assertEquals(1, futureBookings.size());
 
-        assertEquals(booking2,pastBookings.get(0));
-        assertEquals(booking1,futureBookings.get(0));
-        assertEquals(booking3,currentBookings.get(0));
+        assertEquals(booking2, pastBookings.get(0));
+        assertEquals(booking1, futureBookings.get(0));
+        assertEquals(booking3, currentBookings.get(0));
 
     }
 
     @Test
-    void testCountByBookerItemStatus(){
+    void testCountByBookerItemStatus() {
 
         User booker = User.builder()
                 .name("booker")
@@ -380,15 +378,15 @@ public class BookingRepositoryTest {
         assertNotNull(booking3.getId());
         assertNotNull(booking4.getId());
 
-        Long count = bookingRepository.countByBookerIdAndItemIdAndStatus(booker.getId(),item.getId(),
-                "APPROVED",now.toString());
+        Long count = bookingRepository.countByBookerIdAndItemIdAndStatus(booker.getId(), item.getId(),
+                "APPROVED", now.toString());
         assertNotNull(count);
-        assertEquals(2L,count);
+        assertEquals(2L, count);
 
     }
 
     @Test
-    void testLastAndNextBooking(){
+    void testLastAndNextBooking() {
 
         User booker = User.builder()
                 .name("booker")
@@ -456,13 +454,13 @@ public class BookingRepositoryTest {
         assertNotNull(booking3.getId());
         assertNotNull(booking4.getId());
 
-        Booking nextBooking = bookingRepository.getNextBooking(now.toString(),item.getId());
-        Booking lastBooking = bookingRepository.getLastBooking(now.toString(),item.getId());
+        Booking nextBooking = bookingRepository.getNextBooking(now.toString(), item.getId());
+        Booking lastBooking = bookingRepository.getLastBooking(now.toString(), item.getId());
 
         assertNotNull(nextBooking);
         assertNotNull(lastBooking);
-        assertEquals(booking1,nextBooking);
-        assertEquals(booking3,lastBooking);
+        assertEquals(booking1, nextBooking);
+        assertEquals(booking3, lastBooking);
 
     }
 

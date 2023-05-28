@@ -1,7 +1,6 @@
 package ru.practicum.shareit;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
@@ -12,7 +11,7 @@ public class CustomPageRequest implements Pageable {
     private int limit;
     private Sort sort;
 
-    public CustomPageRequest(int offset,int limit){
+    public CustomPageRequest(int offset, int limit) {
         this.offset = offset;
         this.limit = limit;
         this.sort = Sort.unsorted();
@@ -46,7 +45,7 @@ public class CustomPageRequest implements Pageable {
     @Override
     public Pageable previousOrFirst() {
         return hasPrevious() ?
-                new CustomPageRequest(getPageSize(), (int) (getOffset() - getPageSize())): this;
+                new CustomPageRequest(getPageSize(), (int) (getOffset() - getPageSize())) : this;
     }
 
     @Override

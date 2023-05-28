@@ -64,7 +64,7 @@ public class ItemMapper {
         return itemDto;
     }
 
-    public Item convertToItem(ItemInputDto inputDto){
+    public Item convertToItem(ItemInputDto inputDto) {
         return modelMapper.map(inputDto, Item.class);
     }
 
