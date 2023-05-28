@@ -55,7 +55,7 @@ public class CustomPageRequest implements Pageable {
 
     @Override
     public Pageable withPage(int pageNumber) {
-        return null;
+        return new CustomPageRequest(pageNumber, this.getPageSize(), this.getSort());
     }
 
     @Override
