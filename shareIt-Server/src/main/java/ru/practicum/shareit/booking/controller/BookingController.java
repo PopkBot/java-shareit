@@ -9,7 +9,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingInputDto;
 import ru.practicum.shareit.booking.dto.BookingRequestParamsDto;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.booking.validation.BookingCreate;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping("/bookings")
-    public BookingDto addBooking(@BookingCreate @RequestBody BookingInputDto bookingInputDto,
+    public BookingDto addBooking(@RequestBody BookingInputDto bookingInputDto,
                                  @RequestHeader("X-Sharer-User-Id") Long bookerId) {
         log.info("Booking {} is requested", bookingInputDto);
         return bookingService.addBooking(bookingInputDto, bookerId);

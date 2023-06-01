@@ -9,9 +9,6 @@ import ru.practicum.shareit.item.dto.CommentInputDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemInputDto;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.item.validation.CommentCreate;
-import ru.practicum.shareit.item.validation.ItemCreate;
-import ru.practicum.shareit.item.validation.ItemUpdate;
 
 import java.util.List;
 
@@ -31,7 +28,7 @@ public class ItemController {
     }
 
     @PostMapping("/items")
-    public ItemDto addItem(@ItemCreate @RequestBody ItemInputDto itemInputDto,
+    public ItemDto addItem(@RequestBody ItemInputDto itemInputDto,
                            @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("adding new item {} requested", itemInputDto);
         return itemService.addItem(itemInputDto, userId);
@@ -39,7 +36,7 @@ public class ItemController {
 
     @PatchMapping("/items/{itemId}")
     public ItemDto updateItem(@PathVariable Long itemId,
-                              @ItemUpdate @RequestBody ItemInputDto itemInputDto,
+                              @RequestBody ItemInputDto itemInputDto,
                               @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("updating item requested");
         itemInputDto.setId(itemId);
@@ -71,7 +68,7 @@ public class ItemController {
     @PostMapping("/items/{itemId}/comment")
     public CommentDto addComment(@PathVariable Long itemId,
                                  @RequestHeader("X-Sharer-User-Id") Long authorId,
-                                 @CommentCreate @RequestBody CommentInputDto commentInputDto) {
+                                 @RequestBody CommentInputDto commentInputDto) {
         commentInputDto.setAuthorId(authorId);
         commentInputDto.setItemId(itemId);
         log.info("Comment {} adding is requested", commentInputDto);
