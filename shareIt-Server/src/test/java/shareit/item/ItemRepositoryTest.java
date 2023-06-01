@@ -1,0 +1,173 @@
+package shareit.item;
+
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.practicum.shareit.CustomPageRequest;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.projection.ItemIdProjection;
+import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@DataJpaTest
+public class ItemRepositoryTest {
+
+    @Autowired
+    private ItemRepository itemRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Test
+    void testFindByUserIdWithPagination() {
+
+        User user = User.builder()
+                .name("user")
+                .email("user@mail.com")
+                .build();
+
+        Item item1 = Item.builder()
+                .name("item1")
+                .description("description")
+                .available(true)
+                .user(user)
+                .build();
+        Item item2 = Item.builder()
+                .name("item2")
+                .description("description")
+                .available(true)
+                .user(user)
+                .build();
+        Item item3 = Item.builder()
+                .name("item3")
+                .description("description")
+                .available(true)
+                .user(user)
+                .build();
+        Item item4 = Item.builder()
+                .name("item4")
+                .description("description")
+                .available(true)
+                .user(user)
+                .build();
+
+        userRepository.save(user);
+        itemRepository.save(item1);
+        itemRepository.save(item2);
+        itemRepository.save(item3);
+        itemRepository.save(item4);
+
+        Assertions.assertNotNull(user.getId());
+        Assertions.assertNotNull(item1.getId());
+        Assertions.assertNotNull(item2.getId());
+        Assertions.assertNotNull(item3.getId());
+        Assertions.assertNotNull(item4.getId());
+
+        int from = 1;
+        int size = 2;
+
+        Pageable page = new CustomPageRequest(from,size);
+        Page<Item> itemsPage = itemRepository.findAllByUserId(user.getId(), page);
+        List<Item> items = itemsPage.getContent();
+
+        Assertions.assertNotNull(items);
+        assertEquals(2, items.size());
+        assertEquals(item2, items.get(0));
+        assertEquals(item3, items.get(1));
+
+    }
+
+    @Test
+    void testSearchByText() {
+
+        User user = User.builder()
+                .name("user")
+                .email("user@mail.com")
+                .build();
+
+        Item item1 = Item.builder()
+                .name("TexT")
+                .description("description")
+                .available(true)
+                .user(user)
+                .build();
+
+        Item item2 = Item.builder()
+                .name("iTeM1")
+                .description("descrTeXTiption")
+                .available(true)
+                .user(user)
+                .build();
+
+        Item item3 = Item.builder()
+                .name("text")
+                .description("text")
+                .available(false)
+                .user(user)
+                .build();
+
+        userRepository.save(user);
+        itemRepository.save(item1);
+        itemRepository.save(item2);
+        itemRepository.save(item3);
+
+        Integer from = 0;
+        Integer size = 10;
+        String text = "%TEXT%";
+
+        Assertions.assertNotNull(user.getId());
+        Assertions.assertNotNull(item1.getId());
+        Assertions.assertNotNull(item2.getId());
+        Assertions.assertNotNull(item3.getId());
+
+        List<Item> items = itemRepository.searchByQueryText(text, from, size);
+
+        assertNotNull(items);
+        assertEquals(2, items.size());
+        assertEquals(item1, items.get(0));
+        assertEquals(item2, items.get(1));
+
+    }
+
+    @Test
+    void testFindByItemIdAndUserId() {
+
+        User user = User.builder()
+                .name("user")
+                .email("user@mail.com")
+                .build();
+
+        Item item1 = Item.builder()
+                .name("item1")
+                .description("description")
+                .available(true)
+                .user(user)
+                .build();
+
+
+        userRepository.save(user);
+        itemRepository.save(item1);
+
+        Assertions.assertNotNull(user.getId());
+        Assertions.assertNotNull(item1.getId());
+
+        Optional<ItemIdProjection> itemIdProjection = itemRepository.findByIdAndUserId(item1.getId(), user.getId());
+        assertEquals(item1.getId(), itemIdProjection.get().getId());
+
+        itemIdProjection = itemRepository.findByIdAndUserId(item1.getId(), -1L);
+        assertTrue(itemIdProjection.isEmpty());
+
+
+    }
+
+}
