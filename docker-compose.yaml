@@ -5,6 +5,7 @@ services:
     image: postgres:13.7-alpine
     volumes:
       - /var/lib/postgresql/data
+    environment:
       - DB_NAME=shareit
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
@@ -12,18 +13,18 @@ services:
       - DB_PORT=5432
 
   gateway:
-    build: gateway
+    build: shareit-gateway
     image: shareit_gateway
     container_name: shareit_gateway
     ports:
       - "8081:8081"
     depends_on:
-      -server
+      - server
     environment:
       - SHAREIT_SERVER_URL=http://server:8082
 
   server:
-    build: server
+    build: shareit-server
     image: shareit_server
     container_name: shareit_server
     ports:
@@ -31,6 +32,6 @@ services:
     depends_on:
       - db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/shareit
+
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=root
