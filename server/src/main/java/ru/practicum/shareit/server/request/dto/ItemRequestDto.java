@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.server.item.model.Item;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Data
@@ -19,7 +20,7 @@ public class ItemRequestDto {
     private Long id;
     private String description;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime created;
+    private ZonedDateTime created;
     private List<Item> items;
 
 }

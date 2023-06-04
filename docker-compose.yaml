@@ -36,7 +36,7 @@ services:
     volumes:
       - /var/lib/postgresql/data/
     environment:
-      - TZ=Europe/Moscow
+
       - POSTGRES_DB=shareit
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root

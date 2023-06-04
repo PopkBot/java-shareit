@@ -29,7 +29,7 @@ public class ItemRequestMapper {
 
     public ItemRequestDto convertToItemRequestDto(ItemRequest itemRequest) {
         ItemRequestDto itemRequestDto = modelMapper.map(itemRequest, ItemRequestDto.class);
-        itemRequestDto.setCreated(itemRequest.getCreated().toLocalDateTime());
+        itemRequestDto.setCreated(itemRequest.getCreated());
         return itemRequestDto;
     }
 

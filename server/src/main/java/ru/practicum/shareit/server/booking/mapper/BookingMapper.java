@@ -49,13 +49,6 @@ public class BookingMapper {
     public Booking convertToBooking(BookingInputDto bookingInputDto) {
         Booking booking = modelMapper.map(bookingInputDto, Booking.class);
         booking.setStart(bookingInputDto.getStart().atZone(ZoneId.systemDefault()));
-        System.out.println();
-        System.out.println();
-        System.out.println(booking.getStart());
-        System.out.println(bookingInputDto.getStart());
-        System.out.println(bookingInputDto.getStart());
-        System.out.println(bookingInputDto.getStart().atZone(ZoneId.of("UTC")));
-        System.out.println();
         booking.setEnd(bookingInputDto.getEnd().atZone(ZoneId.systemDefault()));
         return booking;
     }

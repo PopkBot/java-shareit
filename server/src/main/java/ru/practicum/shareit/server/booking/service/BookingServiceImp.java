@@ -97,12 +97,6 @@ public class BookingServiceImp implements BookingService {
         }*/
         LocalDateTime end = booking.getEnd().toLocalDateTime();
         LocalDateTime now = LocalDateTime.now();
-        System.out.println();
-        System.out.println();
-        System.out.println(end);
-        System.out.println(now);
-        System.out.println();
-        System.out.println();
         if (isApproved) {
             booking.setStatus(Status.APPROVED);
         } else if (end.isBefore(now)
